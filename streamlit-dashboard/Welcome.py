@@ -9,6 +9,9 @@ import datetime, json
 plt.style.use('fivethirtyeight')
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
+
+st.title(":house: Welcome to Real Estate Analytics")
+
 st.markdown("""---""")
 
 # ---- HIDE STREAMLIT STYLE ----
