@@ -1,9 +1,6 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 import streamlit as st
 import datetime, json
-
-plt.style.use('fivethirtyeight')
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
