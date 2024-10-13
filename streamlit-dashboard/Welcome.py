@@ -151,14 +151,16 @@ right_column.plotly_chart(fig2, use_container_width=True)
 column1, column2 = st.columns([2,8])
 
 with column1:
-    st.number_input('Grunderwerbssteuer', value=6.5)
-    st.number_input('Notarkosten', value=1.5)
-    st.number_input('Grundbucheintrag', value=0.5)
-    st.number_input('Maklerprovision', value=3.75)
-    st.number_input('Zinssatz', value=3.1)
-    st.number_input('Tilgungssatz', value=4.0)
-    st.number_input('Real Estate Price', value=500000)
-    st.number_input('Eigenkapital', value=0.25)
+    grunderwerb = st.number_input('Grunderwerbssteuer [%]', value=6.5)
+    notar = st.number_input('Notarkosten [%]', value=1.5)
+    grundbuch = st.number_input('Grundbucheintrag [%]', value=0.5)
+    provision = st.number_input('Maklerprovision [%]', value=3.75)
+    price = st.number_input('Real Estate Price', value=500000)
+    eigen = st.number_input('Eigenkapital [%]', value=0.25)
+    st.text(f"Total debts: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100) - eigen}")
+
+    zinsen = st.number_input('Zinssatz [%/year]', value=3.1)
+    tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
     
 
 # ---- HIDE STREAMLIT STYLE ----
