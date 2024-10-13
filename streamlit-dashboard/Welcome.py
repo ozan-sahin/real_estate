@@ -62,11 +62,30 @@ with column5:
         locations = common_cities
       
 #queried dataframe
-df_query = df.query("price >= @low_price and Price <= @high_price"). \
+df_query = df.query("price >= @low_price and price <= @high_price"). \
             query("area >= @low_area and area <= @high_area"). \
             query("room >= @low_room and area <= @high_room"). \
             query("return_in_years >= @low_return and return_in_years <= @high_return"). \
             query("city in @locations")
+
+st.dataframe(
+    df_query[ordered_columns].sort_values(by="return_in_years"),
+    column_config={
+        "image": st.column_config.ImageColumn('📷Image', width="small"),
+        "url" : st.column_config.LinkColumn('🔗URL'),
+        "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
+        "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
+        "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-100,max_value=100),
+        "ref_price" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
+        "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
+        "city" : st.column_config.TextColumn('🌍City'),
+        "district" : st.column_config.TextColumn('📌District'),
+        "source" : st.column_config.TextColumn('⚓Source'),
+        "title" : st.column_config.TextColumn('📕Title')
+    },
+    hide_index=True,use_container_width=True
+)
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
