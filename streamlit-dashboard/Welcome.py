@@ -148,9 +148,14 @@ fig2.update_layout(title_text='Return of investment in years')
 
 right_column.plotly_chart(fig2, use_container_width=True)
 
-tab1, tab2 = st.tabs(["Tab 1", "Tab2"])
-tab1.write("this is tab 1")
-tab2.write("this is tab 2")
+column1, column2 = st.columns([3,7])
+
+with column1:
+    st.number_input('Grunderwerbssteuer', value=6.5)
+    st.number_input('Enter a number')
+    st.number_input('Enter a number')
+    st.number_input('Enter a number')
+    st.number_input('Enter a number')
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
