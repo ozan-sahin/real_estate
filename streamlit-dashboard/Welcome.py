@@ -123,14 +123,7 @@ fig = px.bar(
     x='mean',
     y=df_sales.index,
     orientation='h',
-    title='Mean Sale Ratio by City'
-)
-
-# Update the layout for better appearance
-fig.update_layout(
-    xaxis_title='Mean Sale Ratio',
-    yaxis_title='City',
-    height=600,  # You can adjust the height as needed
+    title='Cheapest Cities'
 )
 
 left_column.plotly_chart(fig, use_container_width=True)
@@ -145,7 +138,7 @@ df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
 fig2 = px.bar(
     df_returns,
     x='city',
-    y=df_returns.estate_type,
+    y='estate_type',
     orientation='h',
     title='Returns in years'
 )
