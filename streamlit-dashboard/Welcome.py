@@ -122,8 +122,7 @@ fig = px.bar(
     x='mean',
     y=df_sales.index,
     orientation='h',
-    title='Mean Sale Ratio by City (Count > 5, Mean <= 0)',
-    labels={'mean': 'Mean Sale Ratio', 'y': 'City'}
+    title='Mean Sale Ratio by City'
 )
 
 # Update the layout for better appearance
@@ -133,7 +132,7 @@ fig.update_layout(
     height=600,  # You can adjust the height as needed
 )
 
-left_column, right_column = st.columns([2,8], gap="large")
+left_column, right_column = st.columns([3,7], gap="large")
 
 left_column.plotly_chart(fig, use_container_width=True)
 
