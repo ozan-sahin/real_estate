@@ -218,8 +218,9 @@ fig3.update_layout(
     height=500,
     width=1000
 )
-    with column3:
-        column3.plotly_chart(fig3, use_container_width=True)
+
+with column3:
+    column3.plotly_chart(fig3, use_container_width=True)
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
