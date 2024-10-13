@@ -137,8 +137,8 @@ df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
 
 fig2 = px.bar(
     df_returns,
-    x='city',
-    y=['apartment', 'house'],
+    x=['apartment', 'house'],
+    y='city,
     orientation='h',
     title='Returns in years'
 )
