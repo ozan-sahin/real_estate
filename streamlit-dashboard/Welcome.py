@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import datetime, json
 import plotly.express as px
+import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
