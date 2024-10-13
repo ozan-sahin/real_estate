@@ -109,6 +109,7 @@ with column4:
     tile.write("Number of apartments:")
     tile.subheader(f"🏢 {df.estate_type.value_counts()["apartment"]}")
 
+left_column, right_column = st.columns([3,7], gap="large")
 
 df_sales = df.groupby(["city"])["sale_ratio"] \
         .agg(["count", "mean"]) \
@@ -132,9 +133,24 @@ fig.update_layout(
     height=600,  # You can adjust the height as needed
 )
 
-left_column, right_column = st.columns([3,7], gap="large")
-
 left_column.plotly_chart(fig, use_container_width=True)
+
+df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
+          .agg(["count", "mean"]) \
+          .query("count > 20") \
+          .sort_values(by="mean") \
+          .round(2)["mean"] \
+          .unstack()
+
+fig2 = px.bar(
+    df_returns,
+    x='city',
+    y=df_returns.estate_type,
+    orientation='h',
+    title='Returns in years'
+)
+
+right_column.plotly_chart(fig2, use_container_width=True)
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
