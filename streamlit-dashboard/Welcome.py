@@ -103,11 +103,11 @@ with column2:
 with column3:
     tile = column3.container(height=None, border=True)
     tile.write("Number of houses:")
-    tile.subheader(f"🏡 {df.estate_type.value_counts()["house"])}")
+    tile.subheader(f"🏡 {df.estate_type.value_counts()["house"]}")
 with column4:
     tile = column4.container(height=None, border=True)
     tile.write("Number of apartments:")
-    tile.subheader(f"🏢 {df.estate_type.value_counts()["apartment"])}")
+    tile.subheader(f"🏢 {df.estate_type.value_counts()["apartment"]}")
 
 
 df_sales = df.groupby(["city"])["sale_ratio"] \
