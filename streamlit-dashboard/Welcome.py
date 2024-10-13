@@ -18,7 +18,7 @@ ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area',
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years']
 
 st.dataframe(
-    df[ordered_columns].sort_values(by="PricePerLength"),
+    df[ordered_columns].sort_values(by="return_in_years"),
     column_config={
         "image": st.column_config.ImageColumn('📷Image', width="small"),
         "url" : st.column_config.LinkColumn('🔗URL'),
