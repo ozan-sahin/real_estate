@@ -135,13 +135,13 @@ df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
           .round(2)["mean"] \
           .unstack()
 
-fig2 = px.bar(
-    df_returns,
-    x=['apartment', 'house'],
-    y='city',
-    orientation='h',
-    title='Returns in years'
-)
+fig2 = go.Figure()
+for estate_type in df_returns.columns:
+    fig2.add_trace(go.Bar(
+        x=df_returns.index,
+        y=df_returns[estate_type],
+        name=estate_type
+    ))
 
 right_column.plotly_chart(fig2, use_container_width=True)
 
