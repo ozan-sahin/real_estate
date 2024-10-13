@@ -12,9 +12,27 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-st.markdown("""---""")
-
 df = conn.read()
+
+column1, column2, column3, column4 = st.columns(4)
+with column1:
+    tile = column1.container(height=None, border=True)
+    tile.write("Number of Ads analysed:")
+    tile.subheader(f"🧮{df.shape[0]}")
+with column2:
+    tile = column2.container(height=None, border=True)
+    tile.write("Mean price per Ad:")
+    tile.subheader(f"💶 {round(df.price.mean().round()/1000)} k€")
+with column3:
+    tile = column3.container(height=None, border=True)
+    tile.write("Number of houses:")
+    tile.subheader(f"🏡 {df.estate_type.value_counts()["house"]}")
+with column4:
+    tile = column4.container(height=None, border=True)
+    tile.write("Number of apartments:")
+    tile.subheader(f"🏢 {df.estate_type.value_counts()["apartment"]}")
+
+st.markdown("""---""")
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
@@ -91,24 +109,6 @@ st.dataframe(
     },
     hide_index=True,use_container_width=True
 )
-
-column1, column2, column3, column4 = st.columns(4)
-with column1:
-    tile = column1.container(height=None, border=True)
-    tile.write("Number of Ads analysed:")
-    tile.subheader(f"🧮{df.shape[0]}")
-with column2:
-    tile = column2.container(height=None, border=True)
-    tile.write("Mean price per Ad:")
-    tile.subheader(f"💶 {round(df.price.mean().round()/1000)} k€")
-with column3:
-    tile = column3.container(height=None, border=True)
-    tile.write("Number of houses:")
-    tile.subheader(f"🏡 {df.estate_type.value_counts()["house"]}")
-with column4:
-    tile = column4.container(height=None, border=True)
-    tile.write("Number of apartments:")
-    tile.subheader(f"🏢 {df.estate_type.value_counts()["apartment"]}")
 
 left_column, right_column = st.columns([3,7], gap="large")
 
