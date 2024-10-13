@@ -15,7 +15,7 @@ st.markdown("""---""")
 df = conn.read()
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
-                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', source]
+                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
 st.dataframe(
     df[ordered_columns].sort_values(by="return_in_years"),
