@@ -36,6 +36,40 @@ st.dataframe(
     hide_index=True,use_container_width=True
 )
 
+
+column1, column2, column3, column4, column5 = st.columns([1, 2, 1, 2, 3], gap="large")
+
+with column1:
+    low_price, high_price = st.select_slider('Price Range', options=range(0,2000000), value=(0,500000))
+
+with column2:
+    low_area, high_area = st.select_slider('Area', options=range(0,500), value=(60,200))
+  
+with column3:
+    low_room, high_room = st.select_slider('Room Number', options=range(0,10), value=(3,6))
+
+with column4:
+    low_return, high_return = st.select_slider('Return in Years', options=range(0,100), value=(0,35))
+
+common_cities = df_immo.city.value_counts() \
+    .to_frame() \
+    .query("city > 15") \
+    .index.tolist()
+
+with column5:
+    locations = st.multiselect("Cities", common_cities,[])
+    all_options = st.checkbox("Select all countries", value=True)
+
+    if all_options:
+        locations = common_cities
+      
+#queried dataframe
+df_query = df.query("price >= @low_price and Price <= @high_price"). \
+            query("area >= @low_area and area <= @high_area"). \
+            query("room >= @low_room and area <= @high_room"). \
+            query("return_in_years >= @low_return and return_in_years <= @high_return"). \
+            query("city in @locations")
+
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
             <style>
