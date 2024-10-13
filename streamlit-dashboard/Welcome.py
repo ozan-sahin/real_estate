@@ -130,10 +130,10 @@ fig = px.bar(
 fig.update_layout(
     xaxis_title='Mean Sale Ratio',
     yaxis_title='City',
-    height=500,  # You can adjust the height as needed
+    height=600,  # You can adjust the height as needed
 )
 
-left_column, right_column = st.columns(2)
+left_column, right_column = st.columns([2,8], gap="large")
 
 left_column.plotly_chart(fig, use_container_width=True)
 
