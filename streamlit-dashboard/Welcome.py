@@ -36,14 +36,13 @@ st.dataframe(
     hide_index=True,use_container_width=True
 )
 
-
-column1, column2, column3, column4, column5 = st.columns([2, 1, 1, 2, 3], gap="large")
+column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 2, 3], gap="large")
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0,1000001), value=(0,500000))
 
 with column2:
-    low_area, high_area = st.select_slider('Area', options=range(0,500), value=(60,200))
+    low_area, high_area = st.select_slider('Area', options=range(0,250), value=(60,200))
   
 with column3:
     low_room, high_room = st.select_slider('Room Number', options=range(0,10), value=(3,6))
@@ -62,11 +61,11 @@ with column5:
         locations = common_cities
       
 #queried dataframe
-df_query = df.query("price >= @low_price and price <= @high_price"). \
-            query("area >= @low_area and area <= @high_area"). \
-            query("room >= @low_room and area <= @high_room"). \
-            query("return_in_years >= @low_return and return_in_years <= @high_return"). \
-            query("city in @locations")
+df_query = df.query("price >= @low_price and price <= @high_price") \
+            .query("area >= @low_area and area <= @high_area") \
+            .query("room >= @low_room and area <= @high_room") \
+            .query("return_in_years >= @low_return and return_in_years <= @high_return") \
+            #.query("city in @locations")
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="return_in_years"),
