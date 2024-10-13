@@ -141,8 +141,7 @@ for estate_type in df_returns.columns:
     fig2.add_trace(go.Bar(
         x=df_returns.index,
         y=df_returns[estate_type],
-        name=estate_type,
-        marker_color=['blue','indianred']
+        name=estate_type
     ))
 
 fig2.update_layout(title_text='Return of investment in years')
