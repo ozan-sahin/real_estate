@@ -157,7 +157,6 @@ with column1:
     provision = st.number_input('Maklerprovision [%]', value=3.75)
     price = st.number_input('Real Estate Price', value=500000)
     eigen = st.number_input('Eigenkapital [%]', value=25)
-    st.text(f"Total debts: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100)}")
 
     zinsen = st.number_input('Zinssatz [%/year]', value=3.1)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
@@ -193,6 +192,11 @@ with column2:
     st.dataframe(df_amortization ,
                     hide_index=True,use_container_width=True)
 
+    st.write(f"Total initial debts: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100)}")
+    st.write(f"Remaning debts: {df_amortization.loc[year-1, "Remaining Debt"].round()}")
+    st.write(f"Money paid to interest: {df_amortization["Interest Payment"].sum().round()}")
+    st.write(f"Debt paid back: {df_amortization["Principal Payment"].sum().round()}")
+
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
@@ -205,7 +209,7 @@ fig3.add_trace(go.Bar(
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
     y=df_amortization['Principal Payment'],
-    name='Principal Payment',
+    name='Debt Payment',
     marker_color='lightsalmon'
 ))
 
