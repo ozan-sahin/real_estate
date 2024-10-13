@@ -161,7 +161,37 @@ with column1:
 
     zinsen = st.number_input('Zinssatz [%/year]', value=3.1)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
+
+# Total cost including additional fees
+total_cost = price * (1 + (grunderwerb + notar + grundbuch + provision) / 100)
+loan_amount = total_cost * (1 - eigen / 100)
+annual_interest = loan_amount * zinsen / 100
+annuitat =  loan_amount * (zinsen + tilgung) / 100
+
+# Amortization schedule over 10 years
+remaining_debt = loan_amount
+amortization_schedule = []
+
+for year in range(1, years + 1):
+    interest_payment = remaining_debt * zinsen / 100
+    principal_payment = annuitat - interest_payment
+    total_payment = interest_payment + principal_payment
+    remaining_debt -= principal_payment
     
+    amortization_schedule.append({
+        "Year": year,
+        "Interest Payment": round(interest_payment, 2),
+        "Principal Payment": round(principal_payment, 2),
+        "Total Payment": round(total_payment, 2),
+        "Remaining Debt": round(remaining_debt, 2)
+    })
+
+df_amortization = pd.DataFrame(amortization_schedule)
+
+with column2:
+    st.dataframe(df_amortization ,
+                    hide_index=True,use_container_width=True)
+
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
