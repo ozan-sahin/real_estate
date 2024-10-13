@@ -63,9 +63,9 @@ with column5:
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            .query("room >= @low_room and area <= @high_room") \
-            #.query("return_in_years >= @low_return and return_in_years <= @high_return") \
-            #.query("city in @locations")
+            #.query("room >= @low_room and area <= @high_room") \
+            .query("return_in_years >= @low_return and return_in_years <= @high_return") \
+            .query("city in @locations")
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', 'room', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
