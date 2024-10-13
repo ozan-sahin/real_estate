@@ -15,7 +15,7 @@ st.markdown("""---""")
 df = conn.read()
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
-                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years']
+                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', source]
 
 st.dataframe(
     df[ordered_columns].sort_values(by="return_in_years"),
@@ -27,6 +27,7 @@ st.dataframe(
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-100,max_value=100),
         "ref_price" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
+        "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
         "city" : st.column_config.TextColumn('🌍City'),
         "district" : st.column_config.TextColumn('📌District'),
         "source" : st.column_config.TextColumn('⚓Source'),
