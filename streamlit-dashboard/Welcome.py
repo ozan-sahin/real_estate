@@ -63,7 +63,7 @@ with column5:
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            #.query("room >= @low_room and area <= @high_room") \
+            .query("room >= @low_room and area <= @high_room") \
             #.query("return_in_years >= @low_return and return_in_years <= @high_return") \
             #.query("city in @locations")
 
