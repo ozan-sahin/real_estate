@@ -148,7 +148,7 @@ fig2.update_layout(title_text='Return of investment in years')
 
 right_column.plotly_chart(fig2, use_container_width=True)
 
-column1, column2 = st.columns([2,8])
+column1, column2, column3 = st.columns([2,3,5])
 
 with column1:
     grunderwerb = st.number_input('Grunderwerbssteuer [%]', value=6.5)
@@ -193,6 +193,33 @@ with column2:
     st.dataframe(df_amortization ,
                     hide_index=True,use_container_width=True)
 
+fig3 = go.Figure()
+fig3.add_trace(go.Bar(
+    x=df_amortization['Year'],
+    y=df_amortization['Interest Payment'],
+    name='Interest Payment',
+    marker_color='indianred'
+))
+
+# Add Principal Payment bars
+fig3.add_trace(go.Bar(
+    x=df_amortization['Year'],
+    y=df_amortization['Principal Payment'],
+    name='Principal Payment',
+    marker_color='lightsalmon'
+))
+
+# Update layout for better appearance
+fig3.update_layout(
+    title='Amortization Schedule',
+    xaxis_title='Year',
+    yaxis_title='Amount (€)',
+    barmode='group',
+    height=500,
+    width=1000
+)
+    with column3:
+        column3.plotly_chart(fig3, use_container_width=True)
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
