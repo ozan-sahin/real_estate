@@ -214,7 +214,7 @@ fig3.update_layout(
     title='Amortization Schedule',
     xaxis_title='Year',
     yaxis_title='Amount (€)',
-    barmode='stacked',
+    barmode='stack',
     height=500,
     width=1000
 )
