@@ -51,7 +51,7 @@ with column3:
 with column4:
     low_return, high_return = st.select_slider('Return in Years', options=range(0,100), value=(0,35))
 
-common_cities = df_immo.city.value_counts() \
+common_cities = df.city.value_counts() \
     .to_frame() \
     .query("city > 15") \
     .index.tolist()
