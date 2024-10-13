@@ -161,7 +161,7 @@ with column1:
 
     zinsen = st.number_input('Zinssatz [%/year]', value=3.1)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
-    years = st.number_input('Years', value=10.0)
+    years = st.number_input('Years', value=10, key=int)
 
 # Total cost including additional fees
 total_cost = price * (1 + (grunderwerb + notar + grundbuch + provision) / 100)
