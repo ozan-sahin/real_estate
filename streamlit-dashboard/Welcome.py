@@ -192,10 +192,10 @@ with column2:
     st.dataframe(df_amortization ,
                     hide_index=True,use_container_width=True)
 
-    st.write(f"Total initial debts: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100)}")
-    st.write(f"Remaning debts: {df_amortization.loc[year-1, "Remaining Debt"].round()}")
-    st.write(f"Money paid to interest: {df_amortization["Interest Payment"].sum().round()}")
-    st.write(f"Debt paid back: {df_amortization["Principal Payment"].sum().round()}")
+    st.write(f"Total money borrowed: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100) :,.0f} €")
+    st.write(f"Remaning debts: {df_amortization.loc[year-1, "Remaining Debt"].round():,.0f} €")
+    st.write(f"Money paid to interest: {df_amortization["Interest Payment"].sum().round() :,.0f} €")
+    st.write(f"Debt paid back: {df_amortization["Principal Payment"].sum().round():,.0f} €")
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
