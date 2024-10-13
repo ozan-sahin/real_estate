@@ -56,7 +56,7 @@ common_cities = series_city[series_city > 15].index.tolist()
 
 with column5:
     locations = st.multiselect("Cities", common_cities,[])
-    all_options = st.checkbox("Select all countries", value=True)
+    all_options = st.checkbox("Select all cities", value=True)
 
     if all_options:
         locations = common_cities
