@@ -157,7 +157,7 @@ with column1:
     provision = st.number_input('Maklerprovision [%]', value=3.75)
     price = st.number_input('Real Estate Price', value=500000)
     eigen = st.number_input('Eigenkapital [%]', value=25)
-    st.text(f"Total debts: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100}")
+    st.text(f"Total debts: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100)}")
 
     zinsen = st.number_input('Zinssatz [%/year]', value=3.1)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
