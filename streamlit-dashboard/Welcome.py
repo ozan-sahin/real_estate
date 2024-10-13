@@ -25,7 +25,7 @@ st.dataframe(
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
         "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
-        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=0,max_value=100),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-100,max_value=100),
         "ref_price" : st.column_config.TextColumn('🏷️ReferencePrice'),
         "city" : st.column_config.TextColumn('🌍City'),
         "district" : st.column_config.TextColumn('📌District'),
