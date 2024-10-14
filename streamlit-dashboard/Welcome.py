@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-import datetime, json
 import plotly.express as px
 import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
@@ -14,47 +13,32 @@ st.title(":house: Welcome to Real Estate Analytics")
 
 df = conn.read()
 
-column1, column2, column3, column4 = st.columns(4)
+column1, column2, column3, column4, column5 = st.columns(5)
 with column1:
     tile = column1.container(height=None, border=True)
-    tile.write("Number of Ads analysed:")
+    tile.write("Number of ads analysed")
     tile.subheader(f"🧮{df.shape[0]}")
 with column2:
     tile = column2.container(height=None, border=True)
-    tile.write("Mean price per Ad:")
+    tile.write("Mean price")
     tile.subheader(f"💶 {round(df.price.mean().round()/1000)} k€")
 with column3:
     tile = column3.container(height=None, border=True)
-    tile.write("Number of houses:")
-    tile.subheader(f"🏡 {df.estate_type.value_counts()["house"]}")
+    tile.write("Number of houses")
+    tile.subheader(f"🏡 {df.estate_type.value_counts()['house']}")
 with column4:
     tile = column4.container(height=None, border=True)
-    tile.write("Number of apartments:")
-    tile.subheader(f"🏢 {df.estate_type.value_counts()["apartment"]}")
+    tile.write("Number of apartments")
+    tile.subheader(f"🏢 {df.estate_type.value_counts()['apartment']}")
+with column5:
+    tile = column5.container(height=None, border=True)
+    tile.write("Mean return in years")
+    tile.subheader(f"📈 {round(df.return_in_years.mean().round())}")
 
 st.markdown("""---""")
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
-
-# st.dataframe(
-#     df[ordered_columns].sort_values(by="return_in_years"),
-#     column_config={
-#         "image": st.column_config.ImageColumn('📷Image', width="small"),
-#         "url" : st.column_config.LinkColumn('🔗URL'),
-#         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
-#         "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
-#         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
-#         "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-100,max_value=100),
-#         "ref_price" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
-#         "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
-#         "city" : st.column_config.TextColumn('🌍City'),
-#         "district" : st.column_config.TextColumn('📌District'),
-#         "source" : st.column_config.TextColumn('⚓Source'),
-#         "title" : st.column_config.TextColumn('📕Title')
-#     },
-#     hide_index=True,use_container_width=True
-# )
 
 column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 2, 3], gap="large")
 
@@ -99,7 +83,7 @@ st.dataframe(
         "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "room" : st.column_config.NumberColumn('🏨Room'),
-        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-100,max_value=100),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-50,max_value=100),
         "ref_price" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
         "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
         "city" : st.column_config.TextColumn('🌍City'),
@@ -114,7 +98,7 @@ left_column, right_column = st.columns([3,7], gap="large")
 
 df_sales = df.groupby(["city"])["sale_ratio"] \
         .agg(["count", "mean"]) \
-        .query("count > 5") \
+        .query("count > 20") \
         .sort_values(by="mean", ascending=False) \
         .query("mean <= 0") \
         .round(2)
@@ -127,11 +111,16 @@ fig = px.bar(
     title='Cheapest Cities'
 )
 
+fig.update_layout(legend=dict(orientation = "h",
+                    yanchor="bottom", y=-0.3,
+                    xanchor="left", x=0.01))
+
+
 left_column.plotly_chart(fig, use_container_width=True)
 
 df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
           .agg(["count", "mean"]) \
-          .query("count > 20") \
+          .query("count > 17") \
           .sort_values(by="mean") \
           .round(2)["mean"] \
           .unstack()
@@ -144,11 +133,18 @@ for estate_type in df_returns.columns:
         name=estate_type
     ))
 
-fig2.update_layout(title_text='Return of investment in years')
+fig2.update_layout(
+                   legend=dict(orientation = "h",
+                    yanchor="bottom", y=-0.3,
+                    xanchor="left", x=0.01))
 
-right_column.plotly_chart(fig2, use_container_width=True)
+with right_column:
+    st.subheader("Return of investment in years")
+    right_column.plotly_chart(fig2, use_container_width=True)
 
-column1, column2, column3 = st.columns([2,3,5])
+st.subheader("Finance")
+
+column1, column2, column3 = st.columns([2,6,3])
 
 with column1:
     grunderwerb = st.number_input('Grunderwerbssteuer [%]', value=6.5)
@@ -173,55 +169,79 @@ remaining_debt = loan_amount
 amortization_schedule = []
 
 for year in range(1, years + 1):
-    interest_payment = remaining_debt * zinsen / 100
-    principal_payment = annuitat - interest_payment
-    total_payment = interest_payment + principal_payment
-    remaining_debt -= principal_payment
-    
+
+    if remaining_debt >= annuitat:
+        interest_payment = remaining_debt * zinsen / 100
+        principal_payment = annuitat - interest_payment
+        total_payment = interest_payment + principal_payment
+        remaining_debt -= principal_payment
+    else:
+        interest_payment = remaining_debt * zinsen / 100
+        principal_payment = remaining_debt - interest_payment
+        total_payment = interest_payment + principal_payment
+        remaining_debt = 0
+
+        
     amortization_schedule.append({
         "Year": year,
-        "Interest Payment": round(interest_payment, 2),
-        "Principal Payment": round(principal_payment, 2),
+        "Interest": round(interest_payment, 2),
+        "Payback": round(principal_payment, 2),
         "Total Payment": round(total_payment, 2),
-        "Remaining Debt": round(remaining_debt, 2)
+        "Remaining Debt": round(remaining_debt, 2),
+        "Monthly" : round(total_payment / 12, 2)
     })
 
 df_amortization = pd.DataFrame(amortization_schedule)
 
 with column2:
-    st.dataframe(df_amortization ,
-                    hide_index=True,use_container_width=True)
+    st.dataframe(df_amortization , column_config={
+        "Interest" : st.column_config.NumberColumn('Interest',format="%.0f €"),
+        "Payback" : st.column_config.NumberColumn('Payback',format="%.0f €"),
+        "Total Payment" : st.column_config.NumberColumn('Total Payment',format="%.0f €"),
+        "Remaining Debt" : st.column_config.NumberColumn('Remaining Debt',format="%.0f €"),
+        "Monthly" : st.column_config.NumberColumn('Monhtly',format="%.0f €")
+    },
+        hide_index=True,use_container_width=True, height=600)
 
-    st.write(f"Total money borrowed: {price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
-    st.write(f"Remaning debts: {df_amortization.loc[year-1, "Remaining Debt"].round():,.0f} €")
-    st.write(f"Money paid to interest: {df_amortization["Interest Payment"].sum().round():,.0f} €")
-    st.write(f"Debt paid back: {df_amortization["Principal Payment"].sum().round():,.0f} €")
-    st.write(f"Monthly payment: {(df_amortization["Total Payment"]/12).round():,.0f} €")
+    column11, column22, column33, column44, column55 = st.columns(5)
+    with column11:
+        tile = column11.container(height=None, border=True)
+        tile.metric(label="Money Borrowed", value=f"{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
+    with column22:
+        tile = column22.container(height=None, border=True)
+        tile.metric(label="Remaining Debt", value=f"{df_amortization.loc[year-1, 'Remaining Debt'].round():,.0f} €")
+    with column33:
+        tile = column33.container(height=None, border=True)
+        tile.metric(label="Total Interest Payment", value=f"{df_amortization['Interest'].sum().round():,.0f} €")
+    with column44:
+        tile = column44.container(height=None, border=True)
+        tile.metric(label="Total Payback", value=f"{df_amortization['Payback'].sum().round():,.0f} €")
+    with column55:
+        tile = column55.container(height=None, border=True)
+        tile.metric(label="Monthly Payment", value=f"{(df_amortization.loc[1,'Total Payment']/12).round()}")
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
-    y=df_amortization['Interest Payment'],
-    name='Interest Payment',
+    y=df_amortization['Interest'],
+    name='Interest',
     marker_color='indianred'
 ))
 
-# Add Principal Payment bars
+# Add Payback bars
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
-    y=df_amortization['Principal Payment'],
+    y=df_amortization['Payback'],
     name='Debt Payment',
     marker_color='lightsalmon'
 ))
 
 # Update layout for better appearance
 fig3.update_layout(
-    title='Amortization Schedule',
-    xaxis_title='Year',
-    yaxis_title='Amount (€)',
-    barmode='stack',
-    height=500,
-    width=1000
+    xaxis_title='Year',yaxis_title='Amount (€)',barmode='stack',
+    legend=dict(orientation = "h",
+    yanchor="bottom", y=-0.3,
+    xanchor="left", x=0.01)
 )
 
 with column3:
