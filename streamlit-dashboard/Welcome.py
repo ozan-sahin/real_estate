@@ -201,14 +201,14 @@ with column2:
         "Remaining Debt" : st.column_config.NumberColumn('Remaining Debt',format="%.0f €"),
         "Monthly" : st.column_config.NumberColumn('Monhtly',format="%.0f €")
     },
-        hide_index=True,use_container_width=True, height=600)
+        hide_index=True,use_container_width=True, height=500)
 
     column11, column22, column33 = st.columns(3)
     column44, column55, column66 = st.columns(3)
 
     with column11:
         tile = column11.container(height=None, border=True)
-        tile.metric(label="Eigenkapital", value=f"{price*eigen:,.0f} €")
+        tile.metric(label="Eigenkapital", value=f"{price*eigen/100:,.0f} €")
     with column22:
         tile = column22.container(height=None, border=True)
         tile.metric(label="Money Borrowed", value=f"{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
