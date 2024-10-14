@@ -203,21 +203,26 @@ with column2:
     },
         hide_index=True,use_container_width=True, height=600)
 
-    column11, column22, column33, column44, column55 = st.columns(5)
+    column11, column22, column33 = st.columns(3)
+    column44, column55, column66 = st.columns(3)
+
     with column11:
         tile = column11.container(height=None, border=True)
-        tile.metric(label="Money Borrowed", value=f"{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
+        tile.metric(label="Eigenkapital", value=f"{price*eigen:,.0f} €")
     with column22:
         tile = column22.container(height=None, border=True)
-        tile.metric(label="Remaining Debt", value=f"{df_amortization.loc[year-1, 'Remaining Debt'].round():,.0f} €")
+        tile.metric(label="Money Borrowed", value=f"{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
     with column33:
         tile = column33.container(height=None, border=True)
-        tile.metric(label="Total Interest Payment", value=f"{df_amortization['Interest'].sum().round():,.0f} €")
+        tile.metric(label="Remaining Debt", value=f"{df_amortization.loc[year-1, 'Remaining Debt'].round():,.0f} €")
     with column44:
         tile = column44.container(height=None, border=True)
-        tile.metric(label="Total Payback", value=f"{df_amortization['Payback'].sum().round():,.0f} €")
+        tile.metric(label="Total Interest Payment", value=f"{df_amortization['Interest'].sum().round():,.0f} €")
     with column55:
         tile = column55.container(height=None, border=True)
+        tile.metric(label="Total Payback", value=f"{df_amortization['Payback'].sum().round():,.0f} €")
+    with column66:
+        tile = column66.container(height=None, border=True)
         tile.metric(label="Monthly Payment", value=f"{(df_amortization.loc[1,'Total Payment']/12).round()}")
 
 fig3 = go.Figure()
