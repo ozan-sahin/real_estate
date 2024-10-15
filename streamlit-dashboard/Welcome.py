@@ -206,37 +206,37 @@ with column2:
 
     with column11:
         tile = column11.container(height=None, border=True)
-        tile.metric(label="Eigenkapital", value=f"{price*eigen/100:,.0f} €")
+        tile.metric(label="Eigenkapital", value=f"💰{price*eigen/100:,.0f} €")
     with column22:
         tile = column22.container(height=None, border=True)
-        tile.metric(label="Money Borrowed", value=f"{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
+        tile.metric(label="Money Borrowed", value=f"💸{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
     with column33:
         tile = column33.container(height=None, border=True)
-        tile.metric(label="Remaining Debt", value=f"{df_amortization.loc[year-1, 'Remaining Debt'].round():,.0f} €")
+        tile.metric(label="Remaining Debt", value=f"📉{df_amortization.loc[year-1, 'Remaining Debt'].round():,.0f} €")
     with column44:
         tile = column44.container(height=None, border=True)
-        tile.metric(label="Total Interest Payment", value=f"{df_amortization['Interest'].sum().round():,.0f} €")
+        tile.metric(label="Total Interest Payment", value=f"💵{df_amortization['Interest'].sum().round():,.0f} €")
     with column55:
         tile = column55.container(height=None, border=True)
-        tile.metric(label="Total Payback", value=f"{df_amortization['Payback'].sum().round():,.0f} €")
+        tile.metric(label="Total Payback", value=f"🔄{df_amortization['Payback'].sum().round():,.0f} €")
     with column66:
         tile = column66.container(height=None, border=True)
-        tile.metric(label="Monthly Payment", value=f"{(df_amortization.loc[1,'Total Payment']/12).round()}")
+        tile.metric(label="Monthly Payment", value=f"🗓️{(df_amortization.loc[1,'Total Payment']/12).round():,.0f} €")
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
     y=df_amortization['Interest'],
-    name='Interest',
-    marker_color='indianred'
+    name='Interest'#,
+    #marker_color='indianred'
 ))
 
 # Add Payback bars
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
     y=df_amortization['Payback'],
-    name='Debt Payment',
-    marker_color='lightsalmon'
+    name='Debt Payment'#,
+    #marker_color='lightsalmon'
 ))
 
 # Update layout for better appearance
