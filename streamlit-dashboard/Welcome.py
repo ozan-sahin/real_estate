@@ -71,14 +71,13 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("city in @locations")
             #.query("room >= @low_room and area <= @high_room")
 
-ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', 'room', \
-                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
+ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room', \
+                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source', 'url']
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="return_in_years"),
     column_config={
         "image": st.column_config.ImageColumn('📷Image', width="small"),
-        "url" : st.column_config.LinkColumn('🔗URL'),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
         "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
@@ -89,26 +88,23 @@ st.dataframe(
         "city" : st.column_config.TextColumn('🌍City'),
         "district" : st.column_config.TextColumn('📌District'),
         "source" : st.column_config.TextColumn('⚓Source'),
-        "title" : st.column_config.TextColumn('📕Title')
+        "title" : st.column_config.TextColumn('📕Title'),
+        "url" : st.column_config.LinkColumn('🔗URL')
     },
     hide_index=True,use_container_width=True
 )
 
-left_column, right_column = st.columns([3,7], gap="large")
+left_column, right_column = st.columns([3,5], gap="large")
 
-df_sales = df.groupby(["city"])["sale_ratio"] \
-        .agg(["count", "mean"]) \
-        .query("count > 20") \
-        .sort_values(by="mean", ascending=False) \
-        .query("mean <= 0") \
-        .round(2)
+bins = [60,90,120,150,180,210]
+df['category'] = pd.cut(df['area'], bins)
+df_area_return = df.groupby("category")["return_in_years"].agg(["mean"])
+df_area_return.index = bins[:-1]
 
 fig = px.bar(
-    df_sales,
-    x='mean',
-    y=df_sales.index,
-    orientation='h',
-    title='Cheapest Cities'
+    df_area_return,
+    y='mean',
+    x=df_area_return.index.tolist(),
 )
 
 fig.update_layout(legend=dict(orientation = "h",
@@ -116,7 +112,9 @@ fig.update_layout(legend=dict(orientation = "h",
                     xanchor="left", x=0.01))
 
 
-left_column.plotly_chart(fig, use_container_width=True)
+with left_column:
+    st.subheader("Return of investment for area")
+    left_column.plotly_chart(fig, use_container_width=True)
 
 df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
           .agg(["count", "mean"]) \
