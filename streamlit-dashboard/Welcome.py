@@ -40,7 +40,7 @@ st.markdown("""---""")
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
-column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 2, 3], gap="large")
+column1, column2, column3, column4, column5, column6 = st.columns([2, 2, 1, 2, 3, 2], gap="large")
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0,1000001), value=(0,500000))
@@ -63,13 +63,18 @@ with column5:
 
     if all_options:
         locations = common_cities
+
+with column6:
+    types = st.multiselect("Estate Type", df.estate_type.unique().tolist(),["apartment"])
+
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
             .query("return_in_years >= @low_return and return_in_years <= @high_return") \
-            .query("city in @locations")
-            #.query("room >= @low_room and area <= @high_room")
+            .query("city in @locations") \
+            .query("estate_type in @types") \
+            .query("room >= @low_room and room <= @high_room")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source', 'url']
