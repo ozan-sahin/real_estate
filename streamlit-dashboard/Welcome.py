@@ -123,7 +123,7 @@ with left_column:
 
 df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
           .agg(["count", "mean"]) \
-          .query("count > 17") \
+          .query("count > 18") \
           .sort_values(by="mean") \
           .round(2)["mean"] \
           .unstack()
