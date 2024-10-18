@@ -151,7 +151,6 @@ with right_column:
 # Filter and group data
 most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
 
-
 # Streamlit columns
 column1, column2, column3 = st.columns([2, 3, 6])
 
@@ -164,14 +163,14 @@ fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=df2.index,
     y=df2["price_per_m2"],
-    name="price_per_m2",
+    name="Price per m²",
     yaxis="y1"
 ))
 
 fig3.add_trace(go.Bar(
     x=df2.index,
     y=df2["ref_rent_price"],
-    name="ref_rent_price",
+    name="Reference rent per m² (right axis)",
     yaxis="y2"
 ))
 
@@ -187,7 +186,7 @@ fig3.update_layout(barmode="group",
                     xanchor="left", x=0.01))
 
 with column3:
-    st.subheader("Average Price per m2 and Reference Rent Price by City")
+    st.subheader("Average Price per m² and Reference Rent Price by City")
     st.plotly_chart(fig3, use_container_width=True)
 
 st.subheader("Finance")
