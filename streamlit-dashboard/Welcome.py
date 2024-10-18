@@ -3,6 +3,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
@@ -112,18 +113,20 @@ fig = px.bar(
     x=df_area_return.index.tolist(),
 )
 
-fig.update_layout(legend=dict(orientation = "h",
-                    yanchor="bottom", y=-0.6,
+fig.update_layout(xaxis_title='Area of estate',yaxis_title='Return of investment in years',
+                  legend=dict(orientation = "h",
+                    yanchor="bottom", y=-0.3,
                     xanchor="left", x=0.01))
 
-
 with left_column:
-    st.subheader("Return of investment for area")
+    st.subheader("Return of investment per m²")
     left_column.plotly_chart(fig, use_container_width=True)
 
-df_returns = df.groupby(["city", "estate_type"])["return_in_years"] \
+most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
+
+df_returns = df[df.city.isin(most_popular_cities)].groupby(["city", "estate_type"])["return_in_years"] \
           .agg(["count", "mean"]) \
-          .query("count > 18") \
+          .query("count > 30") \
           .sort_values(by="mean") \
           .round(2)["mean"] \
           .unstack()
@@ -138,12 +141,54 @@ for estate_type in df_returns.columns:
 
 fig2.update_layout(
                    legend=dict(orientation = "h",
-                    yanchor="bottom", y=-0.3,
+                    yanchor="bottom", y=-0.7,
                     xanchor="left", x=0.01))
 
 with right_column:
-    st.subheader("Return of investment in years")
+    st.subheader("Return of investment of biggest cities")
     right_column.plotly_chart(fig2, use_container_width=True)
+
+# Filter and group data
+most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
+
+
+# Streamlit columns
+column1, column2, column3 = st.columns([2, 3, 6])
+
+df2 = df[df.city.isin(most_popular_cities)] \
+    .groupby(["city"])[["price_per_m2", "ref_rent_price"]] \
+    .mean().round(1)
+
+fig3 = go.Figure()
+
+fig3.add_trace(go.Bar(
+    x=df2.index,
+    y=df2["price_per_m2"],
+    name="price_per_m2",
+    yaxis="y1"
+))
+
+fig3.add_trace(go.Bar(
+    x=df2.index,
+    y=df2["ref_rent_price"],
+    name="ref_rent_price",
+    yaxis="y2"
+))
+
+fig3.update_layout(barmode="group",
+                    yaxis2=dict(
+                        anchor='free',
+                        overlaying='y',
+                        side='right',
+                        position=1
+                    ),
+                   legend=dict(orientation = "h",
+                    yanchor="bottom", y=-0.7,
+                    xanchor="left", x=0.01))
+
+with column3:
+    st.subheader("Average Price per m2 and Reference Rent Price by City")
+    st.plotly_chart(fig3, use_container_width=True)
 
 st.subheader("Finance")
 
