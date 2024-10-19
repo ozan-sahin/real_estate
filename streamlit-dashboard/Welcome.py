@@ -1,20 +1,29 @@
 import pandas as pd
 import streamlit as st
+import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
 import matplotlib.pyplot as plt
+import folium
+from folium.plugins import MarkerCluster
+import folium
+from streamlit_folium import st_folium
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
 
+conn2 = st.connection("gsheets_coordinates", type=GSheetsConnection)
+
 st.title(":house: Welcome to Real Estate Analytics")
 
 df = conn.read()
 
-column1, column2, column3, column4, column5 = st.columns(5)
+df_coord = conn2.read()
+
+column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
     tile = column1.container(height=None, border=True)
     tile.write("Number of ads analysed")
@@ -35,6 +44,13 @@ with column5:
     tile = column5.container(height=None, border=True)
     tile.write("Mean return in years")
     tile.subheader(f"📈 {round(df.return_in_years.mean().round())}")
+with column6:
+    today = datetime.date.today()
+    t = today.strftime("%Y-%m-%d")
+    added_today = df.query("query_date == @t").shape[0]
+    tile = column6.container(height=None, border=True)
+    tile.write("New ads published today")
+    tile.subheader(f"🔄{added_today}")
 
 st.markdown("""---""")
 
@@ -152,14 +168,24 @@ with right_column:
 most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
 
 # Streamlit columns
-column1, column2, column3 = st.columns([2, 3, 6])
+column1, column2= st.columns([5, 5])
+
+# with column1:
+#     # location = st.selectbox("Select a city", most_popular_cities)
+    
+#     # df1 = df.query("city == @location")
+#     # st.dataframe(df1)
+#     path_to_html = ".//germany.html"
+#     # Read file and keep in variable
+#     with open(path_to_html,'r', encoding="utf8") as f: 
+#         html_data = f.read()
+#     st.components.v1.html(html_data,height=700)
 
 df2 = df[df.city.isin(most_popular_cities)] \
     .groupby(["city"])[["price_per_m2", "ref_rent_price"]] \
     .mean().round(1)
 
 fig3 = go.Figure()
-
 fig3.add_trace(go.Bar(
     x=df2.index,
     y=df2["price_per_m2"],
@@ -185,7 +211,7 @@ fig3.update_layout(barmode="group",
                     yanchor="bottom", y=-0.7,
                     xanchor="left", x=0.01))
 
-with column3:
+with column2:
     st.subheader("Average Price per m² and Reference Rent Price by City")
     st.plotly_chart(fig3, use_container_width=True)
 
