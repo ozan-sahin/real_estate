@@ -50,7 +50,7 @@ with column6:
     added_today = df.query("query_date == @t").shape[0]
     tile = column6.container(height=None, border=True)
     tile.write("New ads published today")
-    tile.subheader(f"🔄{added_today}")
+    tile.subheader(f"🆕{added_today}")
 
 st.markdown("""---""")
 
@@ -60,13 +60,13 @@ ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area',
 column1, column2, column3, column4, column5, column6 = st.columns([2, 2, 1, 2, 3, 2], gap="large")
 
 with column1:
-    low_price, high_price = st.select_slider('Price Range', options=range(0,1000001), value=(0,500000))
+    low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
 
 with column2:
-    low_area, high_area = st.select_slider('Area', options=range(0,250), value=(60,200))
+    low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
   
 with column3:
-    low_room, high_room = st.select_slider('Room Number', options=range(0,10), value=(3,6))
+    low_room, high_room = st.select_slider('Room Number', options=range(0,50), value=(3,6))
 
 with column4:
     low_return, high_return = st.select_slider('Return in Years', options=range(0,100), value=(0,35))
@@ -231,25 +231,28 @@ with column1:
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
     years = st.number_input('Years', value=10, key=int)
 
+    st.subheader("Tax")
+    gebaude_wert_anteil = st.number_input('Gebäudewertanteil [%]', value=50)
+
 # Total cost including additional fees
 total_cost = price * (1 + (grunderwerb + notar + grundbuch + provision) / 100)
 loan_amount = total_cost * (1 - eigen / 100)
 annual_interest = loan_amount * zinsen / 100
-annuitat =  loan_amount * (zinsen + tilgung) / 100
+annuitat =  loan_amount * (zinsen + tilgung) / 100 / 12
 
 # Amortization schedule over 10 years
 remaining_debt = loan_amount
 amortization_schedule = []
 
-for year in range(1, years + 1):
+for year in range(1, (years + 1)*12 ):
 
     if remaining_debt >= annuitat:
-        interest_payment = remaining_debt * zinsen / 100
+        interest_payment = remaining_debt * zinsen / 100 /12
         principal_payment = annuitat - interest_payment
         total_payment = interest_payment + principal_payment
         remaining_debt -= principal_payment
     else:
-        interest_payment = remaining_debt * zinsen / 100
+        interest_payment = remaining_debt * zinsen / 100 / 12
         principal_payment = remaining_debt - interest_payment
         total_payment = interest_payment + principal_payment
         remaining_debt = 0
@@ -261,7 +264,7 @@ for year in range(1, years + 1):
         "Payback": round(principal_payment, 2),
         "Total Payment": round(total_payment, 2),
         "Remaining Debt": round(remaining_debt, 2),
-        "Monthly" : round(total_payment / 12, 2)
+        "Monthly" : round(total_payment, 2)
     })
 
 df_amortization = pd.DataFrame(amortization_schedule)
@@ -278,6 +281,7 @@ with column2:
 
     column11, column22, column33 = st.columns(3)
     column44, column55, column66 = st.columns(3)
+    column77, column88, column99 = st.columns(3)
 
     with column11:
         tile = column11.container(height=None, border=True)
@@ -296,7 +300,14 @@ with column2:
         tile.metric(label="Total Payback", value=f"🔄{df_amortization['Payback'].sum().round():,.0f} €")
     with column66:
         tile = column66.container(height=None, border=True)
-        tile.metric(label="Monthly Payment", value=f"🗓️{(df_amortization.loc[1,'Total Payment']/12).round():,.0f} €")
+        tile.metric(label="Monthly Payment", value=f"🗓️{(df_amortization.loc[1,'Total Payment']).round():,.0f} €")
+    with column77:
+        tile = column77.container(height=None, border=True)
+        tile.metric(label="Deductible interest payment p.a.", value=f"{(df_amortization['Interest'].iloc[:12].sum()):,.0f} €")
+    with column88:
+        tile = column88.container(height=None, border=True)
+        tile.metric(label="Building Amortization p.a.", value=f"{(gebaude_wert_anteil*price/ 100 * 0.02):,.0f} €")
+
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
@@ -324,6 +335,7 @@ fig3.update_layout(
 
 with column3:
     column3.plotly_chart(fig3, use_container_width=True)
+
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
