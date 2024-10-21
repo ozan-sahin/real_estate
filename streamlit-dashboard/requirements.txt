@@ -8,3 +8,4 @@ streamlit_folium
 datetime
 sqlalchemy
 st-gsheets-connection
+geopy
