@@ -9,6 +9,7 @@ import folium
 from folium.plugins import MarkerCluster
 import folium
 from streamlit_folium import st_folium
+from geopy.geocoders import Nominatim
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
@@ -168,18 +169,35 @@ with right_column:
 most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
 
 # Streamlit columns
-column1, column2= st.columns([5, 5])
+column1, column2= st.columns([7, 3])
 
-# with column1:
-#     # location = st.selectbox("Select a city", most_popular_cities)
-    
-#     # df1 = df.query("city == @location")
-#     # st.dataframe(df1)
-#     path_to_html = ".//germany.html"
-#     # Read file and keep in variable
-#     with open(path_to_html,'r', encoding="utf8") as f: 
-#         html_data = f.read()
-#     st.components.v1.html(html_data,height=700)
+def get_lat_lon( address: str) -> tuple:
+    loc = Nominatim(user_agent="Geopy Library")
+    getLoc = loc.geocode(address)
+    if getLoc:
+        return [float(getLoc.latitude), float(getLoc.longitude)]
+    return [None,None]
+
+with column1:
+    column1_1, column1_2, column1_3, column1_4= st.columns([2,3,2,5])
+    with column1_1:
+        index = st.number_input(label="index", value=50)
+        st.metric(label="City", value=df.iloc[index].city)
+        st.metric(label="District", value=df.iloc[index].district)
+    with column1_2:
+        st.image(df.iloc[index].image, caption=df.iloc[index].title)
+        st.metric(label="Price", value=df.iloc[index].price)
+        st.metric(label="Area m²", value=df.iloc[index].area)
+    with column1_3:
+        st.metric(label="Price per m²", value=df.iloc[index].price_per_m2, delta=df.iloc[index].sale_ratio)
+        st.metric(label="Reference rent price €/m²", value=df.iloc[index].ref_rent_price)
+        st.metric(label="Return in years", value=df.iloc[index].return_in_years)
+        st.metric(label="Expected annual rent €/year", value=round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12))
+    with column1_4:
+        lat, lon = get_lat_lon(df.iloc[index].address)
+        st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5)
+
+
 
 df2 = df[df.city.isin(most_popular_cities)] \
     .groupby(["city"])[["price_per_m2", "ref_rent_price"]] \
@@ -232,7 +250,7 @@ with column1:
     years = st.number_input('Years', value=10, key=int)
 
     st.subheader("Tax")
-    gebaude_wert_anteil = st.number_input('Gebäudewertanteil [%]', value=50)
+    gebaude_wert_anteil = st.number_input('Gebäudewertanteil [%]', value=60)
 
 # Total cost including additional fees
 total_cost = price * (1 + (grunderwerb + notar + grundbuch + provision) / 100)
@@ -303,10 +321,13 @@ with column2:
         tile.metric(label="Monthly Payment", value=f"🗓️{(df_amortization.loc[1,'Total Payment']).round():,.0f} €")
     with column77:
         tile = column77.container(height=None, border=True)
-        tile.metric(label="Deductible interest payment p.a.", value=f"{(df_amortization['Interest'].iloc[:12].sum()):,.0f} €")
+        tile.metric(label="Deductible interest payment p.a.", value=f"🧾{(df_amortization['Interest'].iloc[:12].sum()):,.0f} €")
     with column88:
         tile = column88.container(height=None, border=True)
-        tile.metric(label="Building Amortization p.a.", value=f"{(gebaude_wert_anteil*price/ 100 * 0.02):,.0f} €")
+        tile.metric(label="Building Amortization p.a.", value=f"🏛️{(gebaude_wert_anteil*price/ 100 * 0.02):,.0f} €")
+    with column99:
+        tile = column99.container(height=None, border=True)
+        tile.metric(label="Renovation costs (in first three years at most 15%)", value=f"🛠️{(gebaude_wert_anteil*price/ 100 * 0.15):,.0f} €")
 
 
 fig3 = go.Figure()
