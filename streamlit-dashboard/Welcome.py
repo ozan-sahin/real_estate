@@ -176,7 +176,7 @@ from random import randrange
 
 def get_lat_lon( address: str) -> tuple:
     loc = Nominatim(user_agent="Geopy Library")
-    getLoc = loc.geocode(address)
+    getLoc = loc.geocode(address, timeout=None)
     if getLoc:
         return [float(getLoc.latitude), float(getLoc.longitude)]
     return [None,None]
@@ -206,7 +206,7 @@ with column1:
     with column1_5:
         lat, lon = get_lat_lon(df.iloc[index].address)
         if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5,size=500)
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5,size=400, use_container_width=True)
 
 
 # df2 = df[df.city.isin(most_popular_cities)] \
