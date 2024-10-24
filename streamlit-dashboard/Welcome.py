@@ -117,59 +117,62 @@ st.dataframe(
     hide_index=True,use_container_width=True
 )
 
-left_column, right_column = st.columns([3,5], gap="large")
+# left_column, right_column = st.columns([3,5], gap="large")
 
-bins = [60,90,120,150,180,210]
-df['category'] = pd.cut(df['area'], bins)
-df_area_return = df.groupby("category")["return_in_years"].agg(["mean"])
-df_area_return.index = bins[:-1]
+# bins = [60,90,120,150,180,210]
+# df['category'] = pd.cut(df['area'], bins)
+# df_area_return = df.groupby("category")["return_in_years"].agg(["mean"])
+# df_area_return.index = bins[:-1]
 
-fig = px.bar(
-    df_area_return,
-    y='mean',
-    x=df_area_return.index.tolist(),
-)
+# fig = px.bar(
+#     df_area_return,
+#     y='mean',
+#     x=df_area_return.index.tolist(),
+# )
 
-fig.update_layout(xaxis_title='Area of estate',yaxis_title='Return of investment in years',
-                  legend=dict(orientation = "h",
-                    yanchor="bottom", y=-0.3,
-                    xanchor="left", x=0.01))
+# fig.update_layout(xaxis_title='Area of estate',yaxis_title='Return of investment in years',
+#                   legend=dict(orientation = "h",
+#                     yanchor="bottom", y=-0.3,
+#                     xanchor="left", x=0.01))
 
-with left_column:
-    st.subheader("Return of investment per m²")
-    left_column.plotly_chart(fig, use_container_width=True)
+# with left_column:
+#     st.subheader("Return of investment per m²")
+#     left_column.plotly_chart(fig, use_container_width=True)
 
-most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
+# most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
 
-df_returns = df[df.city.isin(most_popular_cities)].groupby(["city", "estate_type"])["return_in_years"] \
-          .agg(["count", "mean"]) \
-          .query("count > 30") \
-          .sort_values(by="mean") \
-          .round(2)["mean"] \
-          .unstack()
+# df_returns = df[df.city.isin(most_popular_cities)].groupby(["city", "estate_type"])["return_in_years"] \
+#           .agg(["count", "mean"]) \
+#           .query("count > 30") \
+#           .sort_values(by="mean") \
+#           .round(2)["mean"] \
+#           .unstack()
 
-fig2 = go.Figure()
-for estate_type in df_returns.columns:
-    fig2.add_trace(go.Bar(
-        x=df_returns.index,
-        y=df_returns[estate_type],
-        name=estate_type
-    ))
+# fig2 = go.Figure()
+# for estate_type in df_returns.columns:
+#     fig2.add_trace(go.Bar(
+#         x=df_returns.index,
+#         y=df_returns[estate_type],
+#         name=estate_type
+#     ))
 
-fig2.update_layout(
-                   legend=dict(orientation = "h",
-                    yanchor="bottom", y=-0.7,
-                    xanchor="left", x=0.01))
+# fig2.update_layout(
+#                    legend=dict(orientation = "h",
+#                     yanchor="bottom", y=-0.7,
+#                     xanchor="left", x=0.01))
 
-with right_column:
-    st.subheader("Return of investment of biggest cities")
-    right_column.plotly_chart(fig2, use_container_width=True)
+# with right_column:
+#     st.subheader("Return of investment of biggest cities")
+#     right_column.plotly_chart(fig2, use_container_width=True)
 
 # Filter and group data
 most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
 
 # Streamlit columns
 column1, column2= st.columns([7, 3])
+
+from random import randrange
+# Streamlit columns
 
 def get_lat_lon( address: str) -> tuple:
     loc = Nominatim(user_agent="Geopy Library")
@@ -179,59 +182,66 @@ def get_lat_lon( address: str) -> tuple:
     return [None,None]
 
 with column1:
-    column1_1, column1_2, column1_3, column1_4= st.columns([2,3,2,5])
+    column1_1, column1_2, column1_3, column1_4, column1_5= st.columns([4,2,2,2, 5])
     with column1_1:
-        index = st.number_input(label="index", value=50)
+        index = st.number_input(label="index", value=randrange(1,50000))
+        st.image(df.iloc[index].image, caption=df.iloc[index].title)
+        st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
+    with column1_2:
+        st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} €")
+        st.metric(label="Area m²", value=df.iloc[index].area)
         st.metric(label="City", value=df.iloc[index].city)
         st.metric(label="District", value=df.iloc[index].district)
-    with column1_2:
-        st.image(df.iloc[index].image, caption=df.iloc[index].title)
-        st.metric(label="Price", value=df.iloc[index].price)
-        st.metric(label="Area m²", value=df.iloc[index].area)
     with column1_3:
-        st.metric(label="Price per m²", value=df.iloc[index].price_per_m2, delta=df.iloc[index].sale_ratio)
+        st.metric(label="Price per m²", value=int(df.iloc[index].price_per_m2), delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
         st.metric(label="Reference rent price €/m²", value=df.iloc[index].ref_rent_price)
         st.metric(label="Return in years", value=df.iloc[index].return_in_years)
-        st.metric(label="Expected annual rent €/year", value=round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12))
-    with column1_4:
+    with column1_4: 
+        try:   
+            st.metric(label="Expected annual rent €/year", value=round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12))
+            st.metric(label="Expected monthly rent €/m", value=round(df.iloc[index].area * df.iloc[index].ref_rent_price))
+        except ValueError:
+            st.metric(label="", value="")
+
+    with column1_5:
         lat, lon = get_lat_lon(df.iloc[index].address)
-        st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5)
+        if lat and lon:
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5,size=500)
 
 
+# df2 = df[df.city.isin(most_popular_cities)] \
+#     .groupby(["city"])[["price_per_m2", "ref_rent_price"]] \
+#     .mean().round(1)
 
-df2 = df[df.city.isin(most_popular_cities)] \
-    .groupby(["city"])[["price_per_m2", "ref_rent_price"]] \
-    .mean().round(1)
+# fig3 = go.Figure()
+# fig3.add_trace(go.Bar(
+#     x=df2.index,
+#     y=df2["price_per_m2"],
+#     name="Price per m²",
+#     yaxis="y1"
+# ))
 
-fig3 = go.Figure()
-fig3.add_trace(go.Bar(
-    x=df2.index,
-    y=df2["price_per_m2"],
-    name="Price per m²",
-    yaxis="y1"
-))
+# fig3.add_trace(go.Bar(
+#     x=df2.index,
+#     y=df2["ref_rent_price"],
+#     name="Reference rent per m² (right axis)",
+#     yaxis="y2"
+# ))
 
-fig3.add_trace(go.Bar(
-    x=df2.index,
-    y=df2["ref_rent_price"],
-    name="Reference rent per m² (right axis)",
-    yaxis="y2"
-))
+# fig3.update_layout(barmode="group",
+#                     yaxis2=dict(
+#                         anchor='free',
+#                         overlaying='y',
+#                         side='right',
+#                         position=1
+#                     ),
+#                    legend=dict(orientation = "h",
+#                     yanchor="bottom", y=-0.7,
+#                     xanchor="left", x=0.01))
 
-fig3.update_layout(barmode="group",
-                    yaxis2=dict(
-                        anchor='free',
-                        overlaying='y',
-                        side='right',
-                        position=1
-                    ),
-                   legend=dict(orientation = "h",
-                    yanchor="bottom", y=-0.7,
-                    xanchor="left", x=0.01))
-
-with column2:
-    st.subheader("Average Price per m² and Reference Rent Price by City")
-    st.plotly_chart(fig3, use_container_width=True)
+# with column2:
+#     st.subheader("Average Price per m² and Reference Rent Price by City")
+#     st.plotly_chart(fig3, use_container_width=True)
 
 st.subheader("Finance")
 
@@ -301,6 +311,8 @@ with column2:
     column44, column55, column66 = st.columns(3)
     column77, column88, column99 = st.columns(3)
 
+    column111, column222, column333 = st.columns(3)
+
     with column11:
         tile = column11.container(height=None, border=True)
         tile.metric(label="Eigenkapital", value=f"💰{price*eigen/100:,.0f} €")
@@ -328,7 +340,12 @@ with column2:
     with column99:
         tile = column99.container(height=None, border=True)
         tile.metric(label="Renovation costs (in first three years at most 15%)", value=f"🛠️{(gebaude_wert_anteil*price/ 100 * 0.15):,.0f} €")
-
+    with column111:
+        tile = column111.container(height=None, border=True)
+        tile.metric(label="Cashflow", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price - df_amortization.loc[1,'Total Payment']):,.0f} €")
+    with column222:
+        tile = column222.container(height=None, border=True)
+        tile.metric(label="Eigenkapital Yield", value=f"{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
