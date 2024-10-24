@@ -385,6 +385,7 @@ interest_cost = df_amortization['Interest'].iloc[:12].sum()
 amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.02)
 
 tax = (salary + rent_income - interest_cost - amortization_cost) * (0.43)
+earnings_after_tax = (salary + rent_income - interest_cost - amortization_cost) * (1-0.43)
 
 figX = go.Figure(go.Waterfall(
     name="20", orientation="v",
@@ -392,8 +393,9 @@ figX = go.Figure(go.Waterfall(
     x=["Salary", "Rent income", "Net income", "Interest payment",  \
        "Amortisation", "Profit before tax", "Income Tax", "Profit after tax"],
     textposition="outside",
-    text=["+100000", f"+{rent_income}", f"-{interest_cost}", f"-{amortization_cost}", "Earnings", f"-{tax}"],
-    y=[100000, rent_income, 0, interest_cost*-1, amortization_cost*-1, 0 , tax*-1 , 0],
+    text=[f"+{salary:.0f}", f"+{rent_income:.0f}", f"{(salary+rent_income):.0f}",  \
+          f"-{interest_cost:.0f}", f"-{amortization_cost:.0f}", "Profit before tax", f"-{tax:.0f}", f"{earnings_after_tax:.0f}"],
+    y=[salary, rent_income, 0, interest_cost*-1, amortization_cost*-1, 0 , tax*-1 , 0],
     connector={"line": {"color": "rgb(63, 63, 63)"}},
 ))
 
