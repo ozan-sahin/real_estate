@@ -9,7 +9,7 @@ import folium
 from folium.plugins import MarkerCluster
 import folium
 from streamlit_folium import st_folium
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Photon
 
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
@@ -169,44 +169,45 @@ st.dataframe(
 most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
 
 # Streamlit columns
-column1, column2= st.columns([7, 3])
+column1, column2= st.columns([10,6])
 
 from random import randrange
 # Streamlit columns
 
 def get_lat_lon( address: str) -> tuple:
-    loc = Nominatim(user_agent="Geopy Library")
-    getLoc = loc.geocode(address, timeout=None)
+    loc = Photon(user_agent="measurements")
+    getLoc = loc.geocode(address)
     if getLoc:
         return [float(getLoc.latitude), float(getLoc.longitude)]
     return [None,None]
 
 with column1:
-    column1_1, column1_2, column1_3, column1_4, column1_5= st.columns([4,2,2,2, 5])
+    column1_1, column1_2, column1_3, column1_4 = st.columns([4,2,2,2])
     with column1_1:
-        index = st.number_input(label="index", value=randrange(1,50000))
+        index = st.number_input(label="index", value=13585)
         st.image(df.iloc[index].image, caption=df.iloc[index].title)
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
     with column1_2:
         st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} €")
-        st.metric(label="Area m²", value=df.iloc[index].area)
+        st.metric(label="Area", value=f"{df.iloc[index].area:,.0f} m²")
         st.metric(label="City", value=df.iloc[index].city)
         st.metric(label="District", value=df.iloc[index].district)
     with column1_3:
-        st.metric(label="Price per m²", value=int(df.iloc[index].price_per_m2), delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
-        st.metric(label="Reference rent price €/m²", value=df.iloc[index].ref_rent_price)
+        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
+        st.metric(label="Reference rent price", value=f"{df.iloc[index].ref_rent_price:,.0f} €/m²")
         st.metric(label="Return in years", value=df.iloc[index].return_in_years)
     with column1_4: 
-        try:   
-            st.metric(label="Expected annual rent €/year", value=round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12))
-            st.metric(label="Expected monthly rent €/m", value=round(df.iloc[index].area * df.iloc[index].ref_rent_price))
+        try:
+            st.metric(label="Expected annual rent", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price * 12):,.0f} €/year")
+            st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price):,.0f} €/month")
+            st.metric(label="Yield ", value=f"{round((1 / df.iloc[index].return_in_years) * 100, 2)} %")
         except ValueError:
             st.metric(label="", value="")
 
-    with column1_5:
-        lat, lon = get_lat_lon(df.iloc[index].address)
-        if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5,size=400, use_container_width=True)
+with column2:
+    lat, lon = get_lat_lon(df.iloc[index].address)
+    if lat and lon:
+        st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5,use_container_width=True)
 
 
 # df2 = df[df.city.isin(most_popular_cities)] \
@@ -342,10 +343,10 @@ with column2:
         tile.metric(label="Renovation costs (in first three years at most 15%)", value=f"🛠️{(gebaude_wert_anteil*price/ 100 * 0.15):,.0f} €")
     with column111:
         tile = column111.container(height=None, border=True)
-        tile.metric(label="Cashflow", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price - df_amortization.loc[1,'Total Payment']):,.0f} €")
+        tile.metric(label="Cashflow", value=f"💶{(df.iloc[index].area * df.iloc[index].ref_rent_price - df_amortization.loc[1,'Total Payment']):,.0f} €")
     with column222:
         tile = column222.container(height=None, border=True)
-        tile.metric(label="Eigenkapital Yield", value=f"{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
+        tile.metric(label="Eigenkapital Yield", value=f"📈{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
