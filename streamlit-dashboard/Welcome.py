@@ -207,7 +207,7 @@ with column1:
 with column2:
     lat, lon = get_lat_lon(df.iloc[index].address)
     if lat and lon:
-        st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5,use_container_width=True)
+        st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5, use_container_width=True)
 
 
 # df2 = df[df.city.isin(most_popular_cities)] \
@@ -299,14 +299,6 @@ for year in range(1, (years + 1)*12 ):
 df_amortization = pd.DataFrame(amortization_schedule)
 
 with column2:
-    st.dataframe(df_amortization , column_config={
-        "Interest" : st.column_config.NumberColumn('Interest',format="%.0f €"),
-        "Payback" : st.column_config.NumberColumn('Payback',format="%.0f €"),
-        "Total Payment" : st.column_config.NumberColumn('Total Payment',format="%.0f €"),
-        "Remaining Debt" : st.column_config.NumberColumn('Remaining Debt',format="%.0f €"),
-        "Monthly" : st.column_config.NumberColumn('Monhtly',format="%.0f €")
-    },
-        hide_index=True,use_container_width=True, height=500)
 
     column11, column22, column33 = st.columns(3)
     column44, column55, column66 = st.columns(3)
@@ -348,6 +340,15 @@ with column2:
         tile = column222.container(height=None, border=True)
         tile.metric(label="Eigenkapital Yield", value=f"📈{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
 
+    st.dataframe(df_amortization , column_config={
+    "Interest" : st.column_config.NumberColumn('Interest',format="%.0f €"),
+    "Payback" : st.column_config.NumberColumn('Payback',format="%.0f €"),
+    "Total Payment" : st.column_config.NumberColumn('Total Payment',format="%.0f €"),
+    "Remaining Debt" : st.column_config.NumberColumn('Remaining Debt',format="%.0f €"),
+    "Monthly" : st.column_config.NumberColumn('Monhtly',format="%.0f €")
+    },
+    hide_index=True,use_container_width=True, height=500)
+
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=df_amortization['Year'],
@@ -374,6 +375,29 @@ fig3.update_layout(
 
 with column3:
     column3.plotly_chart(fig3, use_container_width=True)
+
+
+st.subheader("Income Statement")
+
+salary = 100000
+rent_income = round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12)
+interest_cost = df_amortization['Interest'].iloc[:12].sum()
+amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.02)
+
+tax = (salary + rent_income - interest_cost - amortization_cost) * (0.43)
+
+figX = go.Figure(go.Waterfall(
+    name="20", orientation="v",
+    measure=["relative", "relative", "total", "relative", "relative", "total", "relative", "total"],
+    x=["Salary", "Rent income", "Net income", "Interest payment",  \
+       "Amortisation", "Profit before tax", "Income Tax", "Profit after tax"],
+    textposition="outside",
+    text=["+100000", f"+{rent_income}", f"-{interest_cost}", f"-{amortization_cost}", "Earnings", f"-{tax}"],
+    y=[100000, rent_income, 0, interest_cost*-1, amortization_cost*-1, 0 , tax*-1 , 0],
+    connector={"line": {"color": "rgb(63, 63, 63)"}},
+))
+
+st.plotly_chart(figX)
 
 
 # ---- HIDE STREAMLIT STYLE ----
