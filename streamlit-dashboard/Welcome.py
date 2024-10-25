@@ -7,7 +7,6 @@ from streamlit_gsheets import GSheetsConnection
 import matplotlib.pyplot as plt
 import folium
 from folium.plugins import MarkerCluster
-import folium
 from streamlit_folium import st_folium
 from geopy.geocoders import Photon
 
@@ -184,7 +183,12 @@ def get_lat_lon( address: str) -> tuple:
 with column1:
     column1_1, column1_2, column1_3, column1_4 = st.columns([4,2,2,2])
     with column1_1:
-        index = st.number_input(label="index", value=13585)
+        # index = st.number_input(label="index", value=13585)
+        link = st.text_input(label="URL to inspect")
+        if link == "":
+            index = 1
+        else:
+            index = df.query("url == @link").index.values[0]
         st.image(df.iloc[index].image, caption=df.iloc[index].title)
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
     with column1_2:
@@ -205,9 +209,12 @@ with column1:
             st.metric(label="", value="")
 
 with column2:
-    lat, lon = get_lat_lon(df.iloc[index].address)
-    if lat and lon:
-        st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5, use_container_width=True)
+    try:
+        lat, lon = get_lat_lon(df.iloc[index].address)
+        if lat and lon:
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5, use_container_width=True)
+    except:
+            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, use_container_width=True)
 
 
 # df2 = df[df.city.isin(most_popular_cities)] \
