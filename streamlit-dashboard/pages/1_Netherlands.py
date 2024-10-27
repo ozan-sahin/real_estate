@@ -11,12 +11,12 @@ import folium
 from streamlit_folium import st_folium
 from geopy.geocoders import Photon
 
-st.set_page_config(page_title="Netherlands Real Estate Market", page_icon=":house:", layout="wide")
+st.set_page_config(page_title="Netherlands Real Estate Market", page_icon=":tulip:", layout="wide")
 
 # Create a connection object.
 conn = st.connection("gsheets_netherlands", type=GSheetsConnection)
 
-st.title(":house: Netherlands Real Estate Market")
+st.title(":tulip: Netherlands Real Estate Market")
 
 df = conn.read()
 
@@ -119,7 +119,7 @@ def get_lat_lon( address: str) -> tuple:
     return [None,None]
 
 with column1:
-    column1_1, column1_2, column1_3, column1_4 = st.columns([4,2,2,2])
+    column1_1, column1_2, column1_3, column1_4 = st.columns([4,2,4,2])
     with column1_1:
         # index = st.number_input(label="index", value=13585)
         link = st.text_input(label="URL to inspect")
