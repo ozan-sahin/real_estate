@@ -7,6 +7,7 @@ from streamlit_gsheets import GSheetsConnection
 import matplotlib.pyplot as plt
 import folium
 from folium.plugins import MarkerCluster
+import folium
 from streamlit_folium import st_folium
 from geopy.geocoders import Photon
 
@@ -57,7 +58,7 @@ st.markdown("""---""")
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
-column1, column2, column3, column4, column5, column6 = st.columns([2, 2, 1, 2, 3, 2], gap="large")
+column1, column2, column3, column4, column5, column6, column7 = st.columns([2, 2, 1, 2, 3, 2, 2], gap="large")
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
@@ -84,6 +85,12 @@ with column5:
 with column6:
     types = st.multiselect("Estate Type", df.estate_type.unique().tolist(),["apartment"])
 
+with column7:
+    dates = st.multiselect("Query Date", df.query_date.unique().tolist(), datetime.date.today().strftime('%Y-%m-%d'))
+    all_options = st.checkbox("Select all dates", value=False)
+
+    if all_options:
+        dates = df.query_date.unique().tolist()
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
@@ -91,10 +98,11 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("return_in_years >= @low_return and return_in_years <= @high_return") \
             .query("city in @locations") \
             .query("estate_type in @types") \
-            .query("room >= @low_room and room <= @high_room")
+            .query("room >= @low_room and room <= @high_room") \
+            .query("query_date == @dates")
 
-ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room', \
-                   'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source', 'url']
+ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
+                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'query_date', 'url']
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="return_in_years"),
@@ -111,6 +119,7 @@ st.dataframe(
         "district" : st.column_config.TextColumn('📌District'),
         "source" : st.column_config.TextColumn('⚓Source'),
         "title" : st.column_config.TextColumn('📕Title'),
+        "date" : st.column_config.DateColumn('📅Query_Date',format="DD.MM.YYYY"),
         "url" : st.column_config.LinkColumn('🔗URL')
     },
     hide_index=True,use_container_width=True
@@ -212,7 +221,7 @@ with column2:
     try:
         lat, lon = get_lat_lon(df.iloc[index].address)
         if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=5.5, use_container_width=True)
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=6.5, use_container_width=True)
     except:
             st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, use_container_width=True)
 
@@ -408,6 +417,30 @@ figX = go.Figure(go.Waterfall(
 
 st.plotly_chart(figX)
 
+
+st.markdown("""
+| Tax Type | Description | Deductible |
+| ----------- | ----------- |----------- |
+| Grunderwerbsteuer | |
+| Grundsteuer | |
+| Einkommen-/Körperschaftsteuer | |
+| Erbschaft- und Schenkungsteuer | |
+| Umsatzsteuer | |
+| Gewerbesteuer | |
+\
+""")
+
+st.markdown("""
+| Costs | Description | Deductible |
+| ----------- | ----------- |----------- |
+| Instandhaltungsrücklage  | Die Instandhaltungsrücklage (auch Erhaltungsrücklage) ist der Spartopf, \
+            auf den Wohnungs- oder Hauseigentümer zurückgreifen, wenn Reparaturen anfallen. \
+            Das Wohnungseigentumsgesetz (WEG) empfiehlt eine Instandhaltungsrücklage anzulegen, gesetzlich vorgeschrieben ist sie aber nicht. \
+            Bei einem Verkauf steigert die Instandhaltungsrücklage den Wert des Hauses oder der Eigentumswohnung. \
+            ```Höhe der jährlichen Rücklagen = Baukosten pro m² x 1,5 : 80 Jahre x 0,7 x Fläche in m²``` \
+            i.e. 164 € / monat | yes \
+| Paragraph | Text |
+""")
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
