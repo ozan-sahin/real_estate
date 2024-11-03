@@ -85,8 +85,9 @@ with column5:
 with column6:
     types = st.multiselect("Estate Type", df.estate_type.unique().tolist(),["apartment"])
 
+date_to_select = df.query_date.unique().tolist() if datetime.date.today().strftime('%Y-%m-%d') in df.query_date.unique().tolist() else df.query_date.unique().tolist()[-1]
 with column7:
-    dates = st.multiselect("Query Date", df.query_date.unique().tolist(), datetime.date.today().strftime('%Y-%m-%d'))
+    dates = st.multiselect("Query Date", df.query_date.unique().tolist(), date_to_select)
     all_options = st.checkbox("Select all dates", value=False)
 
     if all_options:
@@ -102,7 +103,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("query_date == @dates")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
-                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'query_date', 'url']
+                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'query_date', 'url', "status"]
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="return_in_years"),
@@ -120,7 +121,8 @@ st.dataframe(
         "source" : st.column_config.TextColumn('⚓Source'),
         "title" : st.column_config.TextColumn('📕Title'),
         "date" : st.column_config.DateColumn('📅Query_Date',format="DD.MM.YYYY"),
-        "url" : st.column_config.LinkColumn('🔗URL')
+        "url" : st.column_config.LinkColumn('🔗URL'),
+        "status" : st.column_config.TextColumn('Status')
     },
     hide_index=True,use_container_width=True
 )
