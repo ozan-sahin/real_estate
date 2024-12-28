@@ -22,7 +22,7 @@ st.title(":house: Welcome to Real Estate Analytics")
 
 df = conn.read()
 
-df_coord = conn2.read()
+#df_coord = conn2.read()
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
@@ -55,10 +55,14 @@ with column6:
 
 st.markdown("""---""")
 
+df['creation_date'] = pd.to_datetime(df['creation_date'])
+df['update_date'] = pd.to_datetime(df['update_date'])
+
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
-column1, column2, column3, column4, column5, column6, column7 = st.columns([2, 2, 1, 2, 3, 2, 2], gap="large")
+column1, column2, column3, column4 = st.columns([2, 2, 1, 2], gap="large")
+column5, column6, column7 = st.columns([3, 2, 2], gap="large")
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
@@ -83,15 +87,17 @@ with column5:
         locations = common_cities
 
 with column6:
-    types = st.multiselect("Estate Type", df.estate_type.unique().tolist(),["apartment"])
+    types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
 
-date_to_select = df.query_date.unique().tolist() if datetime.date.today().strftime('%Y-%m-%d') in df.query_date.unique().tolist() else df.query_date.unique().tolist()[-1]
+    date_to_select = datetime.date.today().strftime('%Y-%m-%d') if datetime.date.today().strftime('%Y-%m-%d') in \
+        df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist() else df.creation_date.dt.strftime('%Y-%m-%d').sort_values(ascending=False).unique().tolist()[0]
+
 with column7:
-    dates = st.multiselect("Query Date", df.query_date.unique().tolist(), date_to_select)
+    dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
     all_options = st.checkbox("Select all dates", value=False)
 
     if all_options:
-        dates = df.query_date.unique().tolist()
+        dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
@@ -100,10 +106,10 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("city in @locations") \
             .query("estate_type in @types") \
             .query("room >= @low_room and room <= @high_room") \
-            .query("query_date == @dates")
+            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
-                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'query_date', 'url', "status"]
+                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="return_in_years"),
@@ -120,9 +126,9 @@ st.dataframe(
         "district" : st.column_config.TextColumn('📌District'),
         "source" : st.column_config.TextColumn('⚓Source'),
         "title" : st.column_config.TextColumn('📕Title'),
-        "date" : st.column_config.DateColumn('📅Query_Date',format="DD.MM.YYYY"),
+        "creation_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "url" : st.column_config.LinkColumn('🔗URL'),
-        "status" : st.column_config.TextColumn('Status')
+        "makler" : st.column_config.TextColumn('Makler')
     },
     hide_index=True,use_container_width=True
 )
@@ -197,31 +203,38 @@ with column1:
         # index = st.number_input(label="index", value=13585)
         link = st.text_input(label="URL to inspect")
         if link == "":
-            index = 1
+            index = randrange(df.shape[0])
         else:
             index = df.query("url == @link").index.values[0]
-        st.image(df.iloc[index].image, caption=df.iloc[index].title)
+        st.image(df.iloc[index].image, caption=df.iloc[index].headline)
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
+        if pd.notna(df.iloc[index].description):
+            with st.expander("See description"):
+                st.write(df.iloc[index].description)
     with column1_2:
         st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} €")
         st.metric(label="Area", value=f"{df.iloc[index].area:,.0f} m²")
         st.metric(label="City", value=df.iloc[index].city)
         st.metric(label="District", value=df.iloc[index].district)
+        if pd.notna(df.iloc[index].makler):
+            st.markdown(f"Makler: [{df.iloc[index].makler}]({df.iloc[index].makler_website})")
     with column1_3:
         st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
         st.metric(label="Reference rent price", value=f"{df.iloc[index].ref_rent_price:,.0f} €/m²")
         st.metric(label="Return in years", value=df.iloc[index].return_in_years)
+        st.metric(label="Days since creation", value=(datetime.date.today() - df.iloc[index].creation_date.date()).days)
     with column1_4: 
         try:
             st.metric(label="Expected annual rent", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price * 12):,.0f} €/year")
             st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price):,.0f} €/month")
             st.metric(label="Yield ", value=f"{round((1 / df.iloc[index].return_in_years) * 100, 2)} %")
+            st.metric(label="Days since last update", value=(datetime.date.today() - df.iloc[index].update_date.date()).days)
         except ValueError:
             st.metric(label="", value="")
 
 with column2:
     try:
-        lat, lon = get_lat_lon(df.iloc[index].address)
+        lat, lon = get_lat_lon(df.iloc[index].zip_code + " " + df.iloc[index].city+ " " + df.iloc[index].district)
         if lat and lon:
             st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=6.5, use_container_width=True)
     except:
