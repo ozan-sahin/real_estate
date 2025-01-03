@@ -61,11 +61,11 @@ df['update_date'] = pd.to_datetime(df['update_date'])
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
-column1, column2, column3, column4 = st.columns([2, 2, 1, 2], gap="large")
-column5, column6, column7 = st.columns([3, 2, 2], gap="large")
+column1, column2, column3, column4 = st.columns([2, 2, 2, 2], gap="large")
+column5, column6, column7, column8, column9= st.columns([2, 2, 2, 2, 2], gap="large")
 
 with column1:
-    low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
+    low_price, high_price = st.select_slider('Price Range', options=range(0,10000001), value=(0,500000))
 
 with column2:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
@@ -87,12 +87,18 @@ with column5:
         locations = common_cities
 
 with column6:
+    states = st.multiselect("State", df.state.unique().tolist(), "Nordrhein-Westfalen")
+
+with column7:
+    distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Rent"])
+
+with column8:
     types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
 
     date_to_select = datetime.date.today().strftime('%Y-%m-%d') if datetime.date.today().strftime('%Y-%m-%d') in \
         df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist() else df.creation_date.dt.strftime('%Y-%m-%d').sort_values(ascending=False).unique().tolist()[0]
 
-with column7:
+with column9:
     dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
     all_options = st.checkbox("Select all dates", value=False)
 
@@ -102,11 +108,13 @@ with column7:
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            .query("return_in_years >= @low_return and return_in_years <= @high_return") \
             .query("city in @locations") \
             .query("estate_type in @types") \
             .query("room >= @low_room and room <= @high_room") \
             .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+            .query("state in @states") \
+            .query("distribution_type in @distribution_types") \
+            #.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
                     'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
@@ -223,6 +231,7 @@ with column1:
         st.metric(label="Reference rent price", value=f"{df.iloc[index].ref_rent_price:,.0f} €/m²")
         st.metric(label="Return in years", value=df.iloc[index].return_in_years)
         st.metric(label="Days since creation", value=(datetime.date.today() - df.iloc[index].creation_date.date()).days)
+        st.metric(label="Type", value=df.iloc[index].distribution_type)
     with column1_4: 
         try:
             st.metric(label="Expected annual rent", value=f"{(df.iloc[index].area * df.iloc[index].ref_rent_price * 12):,.0f} €/year")
