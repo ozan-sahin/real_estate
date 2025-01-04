@@ -14,13 +14,16 @@ from geopy.geocoders import Photon
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
 # Create a connection object.
-conn = st.connection("gsheets", type=GSheetsConnection)
-
-conn2 = st.connection("gsheets_coordinates", type=GSheetsConnection)
+#conn = st.connection("gsheets", type=GSheetsConnection)
+#conn2 = st.connection("gsheets_coordinates", type=GSheetsConnection)
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-df = conn.read()
+@st.cache_data
+def load_data():
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    return conn.read()
+df = load_data()
 
 #df_coord = conn2.read()
 
