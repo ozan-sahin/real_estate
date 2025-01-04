@@ -420,7 +420,10 @@ with column3:
 st.subheader("Income Statement")
 
 salary = 100000
-rent_income = round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12)
+try:
+    rent_income = round(df.iloc[index].area * df.iloc[index].ref_rent_price * 12)
+except ValueError:
+    rent_income = 0
 interest_cost = df_amortization['Interest'].iloc[:12].sum()
 amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.02)
 
