@@ -16,11 +16,15 @@ st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layo
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-conn2 = st.connection("gsheets_coordinates", type=GSheetsConnection)
+#conn2 = st.connection("gsheets_coordinates", type=GSheetsConnection)
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-df = conn.read(ttl="10m")
+@st.cache_data(ttl=600)
+def load_data():
+    return conn.read()
+
+df = load_data()
 
 #df_coord = conn2.read()
 
@@ -95,25 +99,35 @@ with column7:
 with column8:
     types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
 
-    date_to_select = datetime.date.today().strftime('%Y-%m-%d') if datetime.date.today().strftime('%Y-%m-%d') in \
-        df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist() else df.creation_date.dt.strftime('%Y-%m-%d').sort_values(ascending=False).unique().tolist()[0]
-
 with column9:
-    dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
-    all_options = st.checkbox("Select all dates", value=False)
 
-    if all_options:
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
+
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
         dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
+
+    # dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
+    # all_options = st.checkbox("Select all dates", value=False)
+
+    # if all_options:
+    #     dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
             .query("city in @locations") \
             .query("estate_type in @types") \
-            .query("room >= @low_room and room <= @high_room") \
-            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
             .query("state in @states") \
             .query("distribution_type in @distribution_types") \
+            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+            #.query("room >= @low_room and room <= @high_room") \
             #.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
@@ -196,6 +210,7 @@ most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.
 column1, column2= st.columns([10,6])
 
 from random import randrange
+import math
 # Streamlit columns
 
 def get_lat_lon( address: str) -> tuple:
@@ -313,7 +328,7 @@ annuitat =  loan_amount * (zinsen + tilgung) / 100 / 12
 remaining_debt = loan_amount
 amortization_schedule = []
 
-for year in range(1, (years + 1)*12 ):
+for month in range(1, (years + 1)*12 ):
 
     if remaining_debt >= annuitat:
         interest_payment = remaining_debt * zinsen / 100 /12
@@ -328,7 +343,7 @@ for year in range(1, (years + 1)*12 ):
 
         
     amortization_schedule.append({
-        "Year": year,
+        "Month": month,
         "Interest": round(interest_payment, 2),
         "Payback": round(principal_payment, 2),
         "Total Payment": round(total_payment, 2),
@@ -337,6 +352,9 @@ for year in range(1, (years + 1)*12 ):
     })
 
 df_amortization = pd.DataFrame(amortization_schedule)
+
+# Amortization years
+amortization_in_total = math.log(annuitat / (annuitat - loan_amount * zinsen / 100 / 12)) / math.log(1 + zinsen / 100 / 12)
 
 with column2:
 
@@ -354,7 +372,7 @@ with column2:
         tile.metric(label="Money Borrowed", value=f"💸{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
     with column33:
         tile = column33.container(height=None, border=True)
-        tile.metric(label="Remaining Debt", value=f"📉{df_amortization.loc[year-1, 'Remaining Debt'].round():,.0f} €")
+        tile.metric(label="Remaining Debt", value=f"📉{df_amortization.loc[month-1, 'Remaining Debt'].round():,.0f} €")
     with column44:
         tile = column44.container(height=None, border=True)
         tile.metric(label="Total Interest Payment", value=f"💵{df_amortization['Interest'].sum().round():,.0f} €")
@@ -379,6 +397,9 @@ with column2:
     with column222:
         tile = column222.container(height=None, border=True)
         tile.metric(label="Eigenkapital Yield", value=f"📈{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
+    with column333:
+        tile = column333.container(height=None, border=True)
+        tile.metric(label="Amortization Period", value=f"📅{amortization_in_total / 12:,.1f} years")
 
     st.dataframe(df_amortization , column_config={
     "Interest" : st.column_config.NumberColumn('Interest',format="%.0f €"),
@@ -391,7 +412,7 @@ with column2:
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
-    x=df_amortization['Year'],
+    x=df_amortization['Month'],
     y=df_amortization['Interest'],
     name='Interest'#,
     #marker_color='indianred'
@@ -399,7 +420,7 @@ fig3.add_trace(go.Bar(
 
 # Add Payback bars
 fig3.add_trace(go.Bar(
-    x=df_amortization['Year'],
+    x=df_amortization['Month'],
     y=df_amortization['Payback'],
     name='Debt Payment'#,
     #marker_color='lightsalmon'
@@ -407,7 +428,7 @@ fig3.add_trace(go.Bar(
 
 # Update layout for better appearance
 fig3.update_layout(
-    xaxis_title='Year',yaxis_title='Amount (€)',barmode='stack',
+    xaxis_title='Month',yaxis_title='Amount (€)',barmode='stack',
     legend=dict(orientation = "h",
     yanchor="bottom", y=-0.3,
     xanchor="left", x=0.01)
