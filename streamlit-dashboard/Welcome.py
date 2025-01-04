@@ -19,7 +19,7 @@ st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layo
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def load_data():
     conn = st.connection("gsheets", type=GSheetsConnection)
     return conn.read()
