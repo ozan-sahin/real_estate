@@ -13,11 +13,11 @@ with column1:
     grunderwerb = st.number_input('Grunderwerbssteuer [%]', value=6.5)
     notar = st.number_input('Notarkosten [%]', value=1.5)
     grundbuch = st.number_input('Grundbucheintrag [%]', value=0.5)
-    provision = st.number_input('Maklerprovision [%]', value=3.75)
-    price = st.number_input('Real Estate Price', value=173000)
+    provision = st.number_input('Maklerprovision [%]', value=3.57)
+    price = st.number_input('Real Estate Price', value=170000)
     eigen = st.number_input('Eigenkapital [%]', value=25)
 
-    zinsen = st.number_input('Zinssatz [%/year]', value=3.1)
+    zinsen = st.number_input('Zinssatz [%/year]', value=3.5)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
     years = st.number_input('Years', value=10, key=int)
 
@@ -71,10 +71,11 @@ with column2:
     column77, column88, column99 = st.columns(3)
 
     column111, column222, column333 = st.columns(3)
+    column444, column555, column666 = st.columns(3)
 
     with column11:
         tile = column11.container(height=None, border=True)
-        tile.metric(label="Eigenkapital", value=f"💰{price*eigen/100:,.0f} €")
+        tile.metric(label="Eigenkapital", value=f"💰{total_cost*eigen/100:,.0f} €")
     with column22:
         tile = column22.container(height=None, border=True)
         tile.metric(label="Money Borrowed", value=f"💸{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
@@ -108,6 +109,15 @@ with column2:
     with column333:
         tile = column333.container(height=None, border=True)
         tile.metric(label="Amortization Period", value=f"📅{amortization_in_total / 12:,.1f} years")
+    with column444:
+        tile = column444.container(height=None, border=True)
+        tile.metric(label="Total Cost", value=f"📉{total_cost:,.0f} €")
+    with column555:
+        tile = column555.container(height=None, border=True)
+        tile.metric(label="Nebenkosten perc", value=f"📈{((grunderwerb + notar + grundbuch + provision))} %")
+    with column666:
+        tile = column666.container(height=None, border=True)
+        tile.metric(label="Makler Cost", value=f"📈{price*provision/100:,.0f} €")
 
     st.dataframe(df_amortization , column_config={
     "Interest" : st.column_config.NumberColumn('Interest',format="%.0f €"),
@@ -174,7 +184,53 @@ figX = go.Figure(go.Waterfall(
 
 st.plotly_chart(figX)
 
-st.metric(label="Benefit of getting a mortgage", value=f"📈{(earnings_after_tax - salary* (1-0.43)):,.1f} €")
+#-------
+st.subheader("Income statement with bank loan")
+
+rent_income = round(65 * price_per_m2 * 12)
+interest_cost = df_amortization['Interest'].iloc[:12].sum()
+amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.025)
+laufende_kosten = 850
+tax = ( rent_income - interest_cost - amortization_cost) * (0.42)
+earnings_after_tax2 = (rent_income - interest_cost - amortization_cost) * (1-0.42)
+
+figX = go.Figure(go.Waterfall(
+    name="20", orientation="v",
+    measure=["relative", "relative", "relative", "relative", "total", "relative", "total", "relative", "total"],
+    x=[ "Rent income",  "Interest payment",  "Amortisation", "Laufende Kosten", "Taxable Income", \
+       "Income Tax", "Profit after tax", "Without Amortisation", "Final Income"],
+    textposition="outside",
+    text=[f"+{rent_income:.0f}", f"-{interest_cost:.0f}", f"-{amortization_cost:.0f}",  f"-{laufende_kosten:.0f}", \
+          f"{(rent_income-interest_cost-amortization_cost-laufende_kosten):.0f}",f"-{tax:.0f}", f"{earnings_after_tax2:.0f}", \
+          f"+{amortization_cost:.0f}", f"{(earnings_after_tax2+amortization_cost):.0f} €"],
+    y=[rent_income, interest_cost*-1, amortization_cost*-1, laufende_kosten*-1, 0 , tax*-1 , earnings_after_tax2, amortization_cost,0],
+    connector={"line": {"color": "rgb(63, 63, 63)"}},
+))
+
+st.plotly_chart(figX)
+
+#-------
+st.subheader("Income statement with cash")
+
+rent_income = round(65 * price_per_m2 * 12)
+tax = ( rent_income ) * (0.42)
+earnings_after_tax3 = (rent_income) * (1-0.42)
+
+figX = go.Figure(go.Waterfall(
+    name="20", orientation="v",
+    measure=["relative", "relative", "total"],
+    x=[ "Rent income", "Income Tax", "Final Income"],
+    textposition="outside",
+    text=[f"+{rent_income:.0f}",f"-{tax:.0f}", f"{earnings_after_tax3:.0f}"],
+    y=[rent_income, tax*-1 , earnings_after_tax3 ],
+    connector={"line": {"color": "rgb(63, 63, 63)"}},
+))
+
+st.plotly_chart(figX)
+
+#-------
+
+st.metric(label="Benefit of getting a mortgage", value=f"📈{(earnings_after_tax2 + amortization_cost - earnings_after_tax3):,.1f} €")
 
 st.markdown("""
 | Tax Type | Description | Deductible |
