@@ -62,7 +62,10 @@ for month in range(1, (years + 1)*12 ):
 df_amortization = pd.DataFrame(amortization_schedule)
 
 # Amortization years
-amortization_in_total = math.log(annuitat / (annuitat - loan_amount * zinsen / 100 / 12)) / math.log(1 + zinsen / 100 / 12)
+try:
+    amortization_in_total = math.log(annuitat / (annuitat - loan_amount * zinsen / 100 / 12)) / math.log(1 + zinsen / 100 / 12)
+except ZeroDivisionError:
+    amortization_in_total = float('inf')  # or any other value that makes sense in your context
 
 with column2:
 
@@ -156,33 +159,33 @@ with column3:
     column3.plotly_chart(fig3, use_container_width=True)
 
 
-st.subheader("Income Statement")
+# st.subheader("Income Statement")
 
-salary = 100000
-try:
-    rent_income = round(65*price_per_m2 * 12)
-except ValueError:
-    rent_income = 0
-interest_cost = df_amortization['Interest'].iloc[:12].sum()
-amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.025)
-laufende_kosten = 0
+# salary = 100000
+# try:
+#     rent_income = round(65*price_per_m2 * 12)
+# except ValueError:
+#     rent_income = 0
+# interest_cost = df_amortization['Interest'].iloc[:12].sum()
+# amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.025)
+# laufende_kosten = 0
 
-tax = (salary + rent_income - interest_cost - amortization_cost) * (0.43)
-earnings_after_tax = (salary + rent_income - interest_cost - amortization_cost) * (1-0.43)
+# tax = (salary + rent_income - interest_cost - amortization_cost) * (0.43)
+# earnings_after_tax = (salary + rent_income - interest_cost - amortization_cost) * (1-0.43)
 
-figX = go.Figure(go.Waterfall(
-    name="20", orientation="v",
-    measure=["relative", "relative", "total", "relative", "relative", "total", "relative", "total"],
-    x=["Salary", "Rent income", "Net income", "Interest payment",  \
-       "Amortisation", "Profit before tax", "Income Tax", "Profit after tax"],
-    textposition="outside",
-    text=[f"+{salary:.0f}", f"+{rent_income:.0f}", f"{(salary+rent_income):.0f}",  \
-          f"-{interest_cost:.0f}", f"-{amortization_cost:.0f}", "Profit before tax", f"-{tax:.0f}", f"{earnings_after_tax:.0f}"],
-    y=[salary, rent_income, 0, interest_cost*-1, amortization_cost*-1, 0 , tax*-1 , 0],
-    connector={"line": {"color": "rgb(63, 63, 63)"}},
-))
+# figX = go.Figure(go.Waterfall(
+#     name="20", orientation="v",
+#     measure=["relative", "relative", "total", "relative", "relative", "total", "relative", "total"],
+#     x=["Salary", "Rent income", "Net income", "Interest payment",  \
+#        "Amortisation", "Profit before tax", "Income Tax", "Profit after tax"],
+#     textposition="outside",
+#     text=[f"+{salary:.0f}", f"+{rent_income:.0f}", f"{(salary+rent_income):.0f}",  \
+#           f"-{interest_cost:.0f}", f"-{amortization_cost:.0f}", "Profit before tax", f"-{tax:.0f}", f"{earnings_after_tax:.0f}"],
+#     y=[salary, rent_income, 0, interest_cost*-1, amortization_cost*-1, 0 , tax*-1 , 0],
+#     connector={"line": {"color": "rgb(63, 63, 63)"}},
+# ))
 
-st.plotly_chart(figX)
+# st.plotly_chart(figX)
 
 #-------
 st.subheader("Income statement with bank loan")
@@ -196,14 +199,15 @@ earnings_after_tax2 = (rent_income - interest_cost - amortization_cost) * (1-0.4
 
 figX = go.Figure(go.Waterfall(
     name="20", orientation="v",
-    measure=["relative", "relative", "relative", "relative", "total", "relative", "total", "relative", "total"],
+    measure=["relative", "relative", "relative", "relative", "total", "relative", "total", "relative", "total" , "relative", "total"],
     x=[ "Rent income",  "Interest payment",  "Amortisation", "Laufende Kosten", "Taxable Income", \
-       "Income Tax", "Profit after tax", "Without Amortisation", "Final Income"],
+       "Income Tax", "Profit after tax", "Without Amortisation", "Income", "7%/pa Return of S&P 500 investment", "Final Income"],
     textposition="outside",
     text=[f"+{rent_income:.0f}", f"-{interest_cost:.0f}", f"-{amortization_cost:.0f}",  f"-{laufende_kosten:.0f}", \
           f"{(rent_income-interest_cost-amortization_cost-laufende_kosten):.0f}",f"-{tax:.0f}", f"{earnings_after_tax2:.0f}", \
-          f"+{amortization_cost:.0f}", f"{(earnings_after_tax2+amortization_cost):.0f} €"],
-    y=[rent_income, interest_cost*-1, amortization_cost*-1, laufende_kosten*-1, 0 , tax*-1 , earnings_after_tax2, amortization_cost,0],
+          f"+{amortization_cost:.0f}", f"{(earnings_after_tax2+amortization_cost):.0f} €", f"{(total_cost - total_cost*eigen/100) *0.07:.0f} €"],
+    y=[rent_income, interest_cost*-1, amortization_cost*-1, laufende_kosten*-1, 0 , tax*-1 , earnings_after_tax2, amortization_cost,0,
+       (total_cost - total_cost*eigen/100) *0.07, 0],
     connector={"line": {"color": "rgb(63, 63, 63)"}},
 ))
 
@@ -230,7 +234,7 @@ st.plotly_chart(figX)
 
 #-------
 
-st.metric(label="Benefit of getting a mortgage", value=f"📈{(earnings_after_tax2 + amortization_cost - earnings_after_tax3):,.1f} €")
+st.metric(label="Benefit of getting a mortgage", value=f"📈{(earnings_after_tax2 + amortization_cost + (total_cost - total_cost*eigen/100) *0.07 - earnings_after_tax3):,.1f} €")
 
 st.markdown("""
 | Tax Type | Description | Deductible |
