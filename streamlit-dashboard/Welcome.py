@@ -125,9 +125,9 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("city in @locations") \
             .query("estate_type in @types") \
             .query("state in @states") \
-            #.query("distribution_type in @distribution_types") \
-            #.query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
-            #.query("room >= @low_room and room <= @high_room") \
+            .query("distribution_type in @distribution_types") \
+            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+            .query("room >= @low_room and room <= @high_room") \
             #.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
