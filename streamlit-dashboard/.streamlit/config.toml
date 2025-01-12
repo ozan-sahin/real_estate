@@ -15,4 +15,5 @@ textColor = "#FFF"
 # Default: "sans serif"
 font = "sans serif"
 
+[client]
 showErrorDetails = true
