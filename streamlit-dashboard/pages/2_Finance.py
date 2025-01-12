@@ -193,7 +193,7 @@ st.subheader("Income statement with bank loan")
 rent_income = round(65 * price_per_m2 * 12)
 interest_cost = df_amortization['Interest'].iloc[:12].sum()
 amortization_cost = (gebaude_wert_anteil*price/ 100 * 0.025)
-laufende_kosten = 850
+laufende_kosten = 1000
 tax = ( rent_income - interest_cost - amortization_cost) * (0.42)
 earnings_after_tax2 = (rent_income - interest_cost - amortization_cost) * (1-0.42)
 
