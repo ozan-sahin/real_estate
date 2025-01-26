@@ -22,7 +22,7 @@ st.title(":house: Welcome to Real Estate Analytics")
 
 @st.cache_data()
 def load_data():
-    return conn.read(ttl=120)
+    return conn.read()
 
 df = load_data()
 
