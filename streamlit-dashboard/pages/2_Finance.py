@@ -36,7 +36,7 @@ annuitat =  loan_amount * (zinsen + tilgung) / 100 / 12
 remaining_debt = loan_amount
 amortization_schedule = []
 
-for month in range(1, (years + 1)*12 ):
+for month in range(1, (years)*12 ):
 
     if remaining_debt >= annuitat:
         interest_payment = remaining_debt * zinsen / 100 /12
