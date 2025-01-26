@@ -20,11 +20,11 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-@st.cache_data()
-def load_data():
-    return conn.read()
+# @st.cache_data()
+# def load_data():
+#     return conn.read()
 
-df = load_data()
+df = conn.read()
 
 #df_coord = conn2.read()
 
