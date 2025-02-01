@@ -218,7 +218,7 @@ with column2:
             st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, use_container_width=True)
 
 
----- HIDE STREAMLIT STYLE ----
+#---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
