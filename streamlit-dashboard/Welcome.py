@@ -121,40 +121,40 @@ with column99:
     #     dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 #queried dataframe
-df_query = df.query("price >= @low_price and price <= @high_price") \
-            .query("area >= @low_area and area <= @high_area") \
-            .query("city in @locations") \
-            .query("estate_type in @types") \
-            .query("state in @states") \
-            .query("distribution_type in @distribution_types") \
-            #.query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
-            #.query("room >= @low_room and room <= @high_room") \
-            #.query("return_in_years >= @low_return and return_in_years <= @high_return")
+# df_query = df.query("price >= @low_price and price <= @high_price") \
+#             .query("area >= @low_area and area <= @high_area") \
+#             .query("city in @locations") \
+#             .query("estate_type in @types") \
+#             .query("state in @states") \
+#             .query("distribution_type in @distribution_types") \
+#             #.query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+#             #.query("room >= @low_room and room <= @high_room") \
+#             #.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
-ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
-                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
+# ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
+#                     'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
 
-st.dataframe(
-    df_query[ordered_columns].sort_values(by="return_in_years"),
-    column_config={
-        "image": st.column_config.ImageColumn('📷Image', width="small"),
-        "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
-        "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
-        "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
-        "room" : st.column_config.NumberColumn('🏨Room'),
-        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-50,max_value=100),
-        "ref_price" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
-        "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
-        "city" : st.column_config.TextColumn('🌍City'),
-        "district" : st.column_config.TextColumn('📌District'),
-        "source" : st.column_config.TextColumn('⚓Source'),
-        "title" : st.column_config.TextColumn('📕Title'),
-        "creation_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
-        "url" : st.column_config.LinkColumn('🔗URL'),
-        "makler" : st.column_config.TextColumn('Makler')
-    },
-    hide_index=True,use_container_width=True
-)
+# st.dataframe(
+#     df_query[ordered_columns].sort_values(by="return_in_years"),
+#     column_config={
+#         "image": st.column_config.ImageColumn('📷Image', width="small"),
+#         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
+#         "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
+#         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
+#         "room" : st.column_config.NumberColumn('🏨Room'),
+#         "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-50,max_value=100),
+#         "ref_price" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
+#         "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
+#         "city" : st.column_config.TextColumn('🌍City'),
+#         "district" : st.column_config.TextColumn('📌District'),
+#         "source" : st.column_config.TextColumn('⚓Source'),
+#         "title" : st.column_config.TextColumn('📕Title'),
+#         "creation_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
+#         "url" : st.column_config.LinkColumn('🔗URL'),
+#         "makler" : st.column_config.TextColumn('Makler')
+#     },
+#     hide_index=True,use_container_width=True
+# )
 
 # # Filter and group data
 # most_popular_cities = df.city.value_counts()[df.city.value_counts() > 50].index.tolist()
