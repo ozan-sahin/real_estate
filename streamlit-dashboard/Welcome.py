@@ -25,6 +25,7 @@ st.title(":house: Welcome to Real Estate Analytics")
 #     return conn.read()
 
 df = conn.read()
+st.dataframe(df.tail())
 
 #df_coord = conn2.read()
 
