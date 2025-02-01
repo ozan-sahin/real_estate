@@ -114,11 +114,11 @@ with column99:
     else:
         dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
-    dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
-    all_options = st.checkbox("Select all dates", value=False)
+    # dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
+    # all_options = st.checkbox("Select all dates", value=False)
 
-    if all_options:
-        dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
+    # if all_options:
+    #     dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
