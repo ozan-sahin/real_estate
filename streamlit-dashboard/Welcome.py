@@ -81,38 +81,38 @@ with column33:
 with column44:
     low_return, high_return = st.select_slider('Return in Years', options=range(0,100), value=(0,35))
 
-series_city = df.city.value_counts()
-common_cities = series_city[series_city > 15].index.tolist()
+# series_city = df.city.value_counts()
+# common_cities = series_city[series_city > 15].index.tolist()
 
-with column55:
-    locations = st.multiselect("Cities", common_cities,["Düsseldorf", "Köln"])
-    all_options = st.checkbox("Select all cities", value=False)
+# with column55:
+#     locations = st.multiselect("Cities", common_cities,["Düsseldorf", "Köln"])
+#     all_options = st.checkbox("Select all cities", value=False)
 
-    if all_options:
-        locations = common_cities
+#     if all_options:
+#         locations = common_cities
 
-with column66:
-    states = st.multiselect("State", df.state.unique().tolist(), "Nordrhein-Westfalen")
+# with column66:
+#     states = st.multiselect("State", df.state.unique().tolist(), "Nordrhein-Westfalen")
 
-with column77:
-    distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Rent"])
+# with column77:
+#     distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Rent"])
 
-with column88:
-    types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
+# with column88:
+#     types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
 
-with column99:
+# with column99:
 
-    date_options = ["Today", "Last Week", "Last Month", "All Time"]
-    date_to_select = st.selectbox("Date Range", date_options)
+#     date_options = ["Today", "Last Week", "Last Month", "All Time"]
+#     date_to_select = st.selectbox("Date Range", date_options)
 
-    if date_to_select == "Today":
-        dates = [datetime.date.today().strftime('%Y-%m-%d')]
-    elif date_to_select == "Last Week":
-        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
-    elif date_to_select == "Last Month":
-        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
-    else:
-        dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
+#     if date_to_select == "Today":
+#         dates = [datetime.date.today().strftime('%Y-%m-%d')]
+#     elif date_to_select == "Last Week":
+#         dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+#     elif date_to_select == "Last Month":
+#         dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+#     else:
+#         dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
     # dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
     # all_options = st.checkbox("Select all dates", value=False)
