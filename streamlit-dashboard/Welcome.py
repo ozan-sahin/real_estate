@@ -70,16 +70,16 @@ column11, column22, column33, column44 = st.columns([2, 2, 2, 2])
 column55, column66, column77, column88, column99= st.columns([2, 2, 2, 2, 2])
 
 with column11:
-    low_price, high_price = st.slider('Price Range', options=range(0,10000001), value=(0,500000))
+    low_price, high_price = st.slider('Price Range', min_value=0, max_value=10000000, value=(0, 500000))
 
-# with column22:
-#     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
+with column22:
+    low_area, high_area = st.slider('Area', min_value=0, max_value=650, value=(60, 200))
   
-# with column33:
-#     low_room, high_room = st.select_slider('Room Number', options=range(0,50), value=(3,6))
+with column33:
+    low_room, high_room = st.slider('Room Number', min_value=0, max_value=50, value=(3, 6))
 
-# with column44:
-#     low_return, high_return = st.select_slider('Return in Years', options=range(0,100), value=(0,35))
+with column44:
+    low_return, high_return = st.slider('Return in Years', min_value=0, max_value=100, value=(0, 35))
 
 # series_city = df.city.value_counts()
 # common_cities = series_city[series_city > 15].index.tolist()
