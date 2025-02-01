@@ -60,47 +60,47 @@ with column6:
 
 st.markdown("""---""")
 
-#df['creation_date'] = pd.to_datetime(df['creation_date'])
-#df['update_date'] = pd.to_datetime(df['update_date'])
+df['creation_date'] = pd.to_datetime(df['creation_date'])
+df['update_date'] = pd.to_datetime(df['update_date'])
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
-column1, column2, column3, column4 = st.columns([2, 2, 2, 2], gap="large")
-column5, column6, column7, column8, column9= st.columns([2, 2, 2, 2, 2], gap="large")
+column11, column22, column33, column44 = st.columns([2, 2, 2, 2], gap="large")
+column55, column66, column77, column88, column99= st.columns([2, 2, 2, 2, 2], gap="large")
 
-with column1:
+with column11:
     low_price, high_price = st.select_slider('Price Range', options=range(0,10000001), value=(0,500000))
 
-with column2:
+with column22:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
   
-with column3:
+with column33:
     low_room, high_room = st.select_slider('Room Number', options=range(0,50), value=(3,6))
 
-with column4:
+with column44:
     low_return, high_return = st.select_slider('Return in Years', options=range(0,100), value=(0,35))
 
 series_city = df.city.value_counts()
 common_cities = series_city[series_city > 15].index.tolist()
 
-with column5:
+with column55:
     locations = st.multiselect("Cities", common_cities,["Düsseldorf", "Köln"])
     all_options = st.checkbox("Select all cities", value=False)
 
     if all_options:
         locations = common_cities
 
-with column6:
+with column66:
     states = st.multiselect("State", df.state.unique().tolist(), "Nordrhein-Westfalen")
 
-with column7:
+with column77:
     distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Rent"])
 
-with column8:
+with column88:
     types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
 
-with column9:
+with column99:
 
     date_options = ["Today", "Last Week", "Last Month", "All Time"]
     date_to_select = st.selectbox("Date Range", date_options)
@@ -127,7 +127,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("estate_type in @types") \
             .query("state in @states") \
             .query("distribution_type in @distribution_types") \
-            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+            #.query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
             #.query("room >= @low_room and room <= @high_room") \
             #.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
