@@ -219,14 +219,14 @@ ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area',
 
 
 # ---- HIDE STREAMLIT STYLE ----
-hide_st_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            section[data-testid="stSidebar"] {
-                    width: 200px !important;
-                    }
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+# hide_st_style = """
+#             <style>
+#             #MainMenu {visibility: hidden;}
+#             footer {visibility: hidden;}
+#             header {visibility: hidden;}
+#             section[data-testid="stSidebar"] {
+#                     width: 200px !important;
+#                     }
+#             </style>
+#             """
+# st.markdown(hide_st_style, unsafe_allow_html=True)
