@@ -66,11 +66,11 @@ st.markdown("""---""")
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
-column11, column22, column33, column44 = st.columns([2, 2, 2, 2], gap="large")
-column55, column66, column77, column88, column99= st.columns([2, 2, 2, 2, 2], gap="large")
+# column11, column22, column33, column44 = st.columns([2, 2, 2, 2], gap="large")
+# column55, column66, column77, column88, column99= st.columns([2, 2, 2, 2, 2], gap="large")
 
-with column11:
-    low_price, high_price = st.select_slider('Price Range', options=range(0,10000001), value=(0,500000))
+# with column11:
+#     low_price, high_price = st.select_slider('Price Range', options=range(0,10000001), value=(0,500000))
 
 # with column22:
 #     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
