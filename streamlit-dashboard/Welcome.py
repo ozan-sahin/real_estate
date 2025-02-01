@@ -60,8 +60,8 @@ with column6:
 
 st.markdown("""---""")
 
-#df['creation_date'] = pd.to_datetime(df['creation_date'])
-#df['update_date'] = pd.to_datetime(df['update_date'])
+df['creation_date'] = pd.to_datetime(df['creation_date'])
+df['update_date'] = pd.to_datetime(df['update_date'])
 
 # ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
 #                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
