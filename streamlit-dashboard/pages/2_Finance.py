@@ -15,15 +15,15 @@ with column1:
     grundbuch = st.number_input('Grundbucheintrag [%]', value=0.5)
     provision = st.number_input('Maklerprovision [%]', value=3.57)
     price = st.number_input('Real Estate Price', value=170000)
-    eigen = st.number_input('Eigenkapital [%]', value=25)
+    eigen = st.number_input('Eigenkapital [%]', value=20)
 
-    zinsen = st.number_input('Zinssatz [%/year]', value=3.5)
+    zinsen = st.number_input('Zinssatz [%/year]', value=3.8)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
-    years = st.number_input('Years', value=10, key=int)
+    years = st.number_input('Years', value=5, key=int)
 
     st.subheader("Tax")
     gebaude_wert_anteil = st.number_input('Gebäudewertanteil [%]', value=85)
-    price_per_m2 = st.number_input('Price [€/m2]', value=15.0)
+    price_per_m2 = st.number_input('Price [€/m2]', value=14.0)
     rent_income_ = st.number_input('Monthly Rent Income', value=price_per_m2*65)
 
 # Total cost including additional fees
