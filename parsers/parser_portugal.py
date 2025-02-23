@@ -1,3 +1,4 @@
+#%%
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -23,7 +24,7 @@ def parse() -> pd.DataFrame:
 
         base_url = f"https://www.idealista.pt/en/comprar-casas/{district}/"
 
-        for page in range(1,60): # 60 pages max.
+        for page in range(1,10): # 60 pages max.
             if page == 1:
                 param = "?ordem=atualizado-desc"
             else:
@@ -50,11 +51,10 @@ def parse() -> pd.DataFrame:
                 image = listing.find('img')['src'] if listing.find('img') else None
                 estate_type = title.split(' in ')[0]
                 address = title.split(' in ')[-1]
-                price = int(listing.find('span', class_='item-price').get_text(strip=True).replace('€','').replace(',','').strip())
+                price = listing.find('span', class_='item-price').get_text(strip=True)
                 details = listing.find_all('span', class_='item-detail')
-                area = int(details[1].get_text(strip=True).replace('m²', '').replace(',','').strip()) if len(details) > 1 and 'm²' in details[1].get_text(strip=True) else None
-                price_per_m2 = round(price / area) if area else None
-                room = int(details[0].get_text(strip=True).replace('T', '').strip()) if 'T' in details[0].get_text(strip=True) else None
+                area = details[1].get_text(strip=True) if len(details) > 1 and 'm²' in details[1].get_text(strip=True) else None
+                room = details[0].get_text(strip=True) if 'T' in details[0].get_text(strip=True) else None
                 other_details = details[2].get_text(strip=True) if len(details) > 2 else None
                 
                 data.append({
@@ -64,7 +64,6 @@ def parse() -> pd.DataFrame:
                     'district': district,
                     'estate_tpye' : estate_type,
                     'price': price,
-                    'price_per_m2': price_per_m2,
                     'details': details,
                     'area': area,
                     'room': room,
@@ -76,10 +75,16 @@ def parse() -> pd.DataFrame:
     return df
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
-    df[~df["price"].isna()].reset_index(drop=True)
-    df['area'] = pd.to_numeric(df['area'], errors='coerce')
-    df['bedrooms'] = pd.to_numeric(df['bedrooms'], errors='coerce')
-    df['price_per_m2'] = round(df['price'] / df['area'],0)
-    df['source'] = 'Immoweb'
+    df["price"] = df["price"].str.replace('€','').str.replace(',','').astype(float)
+    df["area"] = df["area"].str.replace('m²','').str.replace(',','').astype(float)
+    df["price_per_m2"] = round(df.price / df.area)
+    df["room"] = df.room.str.replace('T', '').str.strip().astype(float)
+    # df[~df["price"].isna()].reset_index(drop=True)
+    # df['area'] = pd.to_numeric(df['area'], errors='coerce')
+    # df['bedrooms'] = pd.to_numeric(df['bedrooms'], errors='coerce')
+    # df['price_per_m2'] = round(df['price'] / df['area'],0)
+    df['source'] = 'idealista'
     df['query_date'] = pd.to_datetime('today').strftime('%Y-%m-%d')
     return df
+
+#%%
