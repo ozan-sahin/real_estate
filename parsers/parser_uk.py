@@ -2,6 +2,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import re
 
 def parse() -> pd.DataFrame:
 
@@ -65,6 +66,16 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
         return None
     df["rooms"] = df.apply(get_rooms, axis=1)
     df["estate_type"] = df["title"].str.split().str[-3]
+
+    def split_details(row):
+        bedrooms = int(re.search(r'(\d+)br', row["details"]).group(1)) if 'br' in row["details"] else None
+        bathrooms = int(re.search(r'(\d+)ba', row["details"]).group(1)) if 'ba' in row["details"] else None
+        level = int(re.search(r'(\d+)(?:th|nd|st)', row["details"]).group(1)) if re.search(r'(\d+)(?:th|nd|st)', row["details"]) else None
+        if level is None and row["details"].startswith("G"):
+            level = 0
+        return [level, bedrooms, bathrooms]
+    
+    df[["level", "rooms", "bathrooms"]] = df.apply(split_details, axis=1, result_type="expand")
     df['source'] = 'rightmove'
     df['query_date'] = pd.to_datetime('today').strftime('%Y-%m-%d')
     return df
