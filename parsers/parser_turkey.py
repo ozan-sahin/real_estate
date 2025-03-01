@@ -1,3 +1,4 @@
+#%%
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -6,12 +7,11 @@ def parse(ad_type: str, real_estate_type:str, city:str) -> pd.DataFrame:
 
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br'}
+    'Accept-Language': 'en-US,en;q=0.9'}
 
     data = []
 
-    for page in range(1,51): #Max 50 pages
+    for page in range(1,20): #Max 50 pages
         # Define the URL
         url = f"https://www.emlakjet.com/{ad_type}-{real_estate_type}/{city}/{page}/?siralama=4"
 
@@ -85,7 +85,8 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df[['type', 'rooms', 'level', 'area']] = df.apply(lambda row: split_details(row['details'], row['real_estate_type']), axis=1)
     df['area'] = df['area'].str.replace(".","").str.extract(r'(\d+)').astype(float)
     #df.loc[df['real_estate_type'] == 'arsa', 'area'] *= 1000
-    df['price_per_m2'] = round(df['price'] / df['area'],0)
+    df["badges"] = df["badges"].apply(lambda x: ", ".join(x) if x else None)
+    df['price_per_m2'] = round(df['price'] / df['area'], 0)
     df['price_EUR_per_m2'] = round(df['price_EUR'] / df['area'],0)
     df[["ilce", "mahalle"]] = df.location_raw.str.split(" - ", expand=True)
     ref_price_per_m2 = df.groupby("mahalle")["price_per_m2"].mean().round().sort_values(ascending=False).to_dict()
@@ -96,3 +97,8 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df["sale_ratio"] = df.apply(lambda row: get_sale_ratio(row, ref_price_per_m2), axis=1)
     df = df.drop(['price_raw', 'details', 'location_raw'], axis=1)
     return df
+
+def save(df:pd.DataFrame):
+    df.to_csv("delete.csv", index=False, encoding="utf-8-sig", sep=";")
+
+#%%
