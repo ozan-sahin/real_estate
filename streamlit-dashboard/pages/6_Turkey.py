@@ -19,6 +19,7 @@ conn = st.connection("gsheets_turkey", type=GSheetsConnection)
 st.title("🧿 Turkey Real Estate Market")
 
 df = conn.read()
+df['query_date'] = pd.to_datetime(df['query_date'])
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
@@ -52,9 +53,9 @@ with column6:
 st.markdown("""---""")
 
 ordered_columns = ['image', 'mahalle', 'ilce', 'price', 'area', \
-                   'price_per_m2', 'rooms', 'source', 'url']
+                   'price_per_m2', 'rooms', 'query_date', 'url']
 
-column1, column2, column3, column4= st.columns([2, 2, 1, 3], gap="large")
+column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 3, 2], gap="large")
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
@@ -75,14 +76,29 @@ with column4:
     if all_options:
         locations = common_cities
 
+with column5:
+
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
+
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
+        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
+    
       
 #queried dataframe
 df_query = df.query("price_EUR >= @low_price and price_EUR <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            .query("mahalle in @locations")
+            .query("mahalle in @locations") \
+            .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
 ordered_columns = ['image', 'mahalle', 'ilce', 'price', 'price_EUR', 'area', \
-                   'price_EUR_per_m2', 'sale_ratio', 'rooms','title',  'source', 'url']
+                   'price_EUR_per_m2', 'sale_ratio', 'rooms','title',  'query_date', 'url']
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="price_EUR_per_m2"),
@@ -97,7 +113,7 @@ st.dataframe(
         "ilce" : st.column_config.TextColumn('🌍City'),
         "mahalle" : st.column_config.TextColumn('🏘️Neighborhood'),
         "title" : st.column_config.TextColumn('📕Title'),
-        "source" : st.column_config.TextColumn('⚓Source'),
+        "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "url" : st.column_config.LinkColumn('🔗URL')
     },
     hide_index=True,use_container_width=True
@@ -146,7 +162,7 @@ with column1:
 
 with column2:
     try:
-        lat, lon = get_lat_lon(df.iloc[index].mahalle)
+        lat, lon = get_lat_lon(df.iloc[index].mahalle + " " + df.iloc[index].ilce)
         if lat and lon:
             st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=11, use_container_width=True)
     except:
@@ -158,7 +174,7 @@ left_column, middle_column, right_column = st.columns([3,5, 5], gap="large")
 
 bins = [30,60,90,120,150,180,210]
 df['category'] = pd.cut(df['area'], bins)
-df_area_return = df.groupby("category")["price_per_m2"].agg(["mean"])
+df_area_return = df.groupby("category")["price_EUR_per_m2"].agg(["mean"])
 df_area_return.index = bins[:-1]
 
 fig = px.bar(
@@ -173,18 +189,18 @@ fig.update_layout(xaxis_title='Area of estate',yaxis_title='Mean unit price',
                     xanchor="left", x=0.01))
 
 with left_column:
-    st.subheader("Mean unit price per m²")
+    st.subheader("Mean unit price in € per m²")
     left_column.plotly_chart(fig, use_container_width=True)
 
 df2 = df[df.mahalle.isin(most_popular_cities)] \
-    .groupby(["mahalle"])[["price_per_m2"]] \
-    .mean().sort_values(by="price_per_m2").round(1)
+    .groupby(["mahalle"])[["price_EUR_per_m2"]] \
+    .mean().sort_values(by="price_EUR_per_m2").round(1)
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=df2.index,
-    y=df2["price_per_m2"],
-    name="Price per m²",
+    y=df2["price_EUR_per_m2"],
+    name="Price € per m²",
     yaxis="y1"
 ))
 
@@ -200,13 +216,13 @@ fig3.update_layout(barmode="group",
                     xanchor="left", x=0.01))
 
 with middle_column:
-    st.subheader("Average Price per m²")
+    st.subheader("Average Price € per m²")
     st.plotly_chart(fig3, use_container_width=True)
 
 
 most_popular_cities = df.mahalle.value_counts()[df.mahalle.value_counts() > 10].index.tolist()
 
-df_price = df[df.mahalle.isin(most_popular_cities)].groupby(["mahalle"])["price"] \
+df_price = df[df.mahalle.isin(most_popular_cities)].groupby(["mahalle"])["price_EUR"] \
           .agg(["mean"]) \
           .sort_values(by="mean") \
           .round(2)
@@ -216,7 +232,7 @@ fig2 = go.Figure()
 fig2.add_trace(go.Bar(
     x=df_price.index,
     y=df_price["mean"],
-    name="mean price"
+    name="mean price in €"
 ))
 
 fig2.update_layout(

@@ -19,6 +19,7 @@ conn = st.connection("gsheets_belgium", type=GSheetsConnection)
 st.title("🧇 Belgium Real Estate Market")
 
 df = conn.read()
+df['query_date'] = pd.to_datetime(df['query_date'])
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
@@ -54,7 +55,7 @@ st.markdown("""---""")
 ordered_columns = ['image', 'location', 'price', 'area', \
                    'price_per_m2', 'bedrooms', 'source', 'url']
 
-column1, column2, column3, column4= st.columns([2, 2, 1, 3], gap="large")
+column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 3, 2], gap="large")
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
@@ -75,15 +76,30 @@ with column4:
     if all_options:
         locations = common_cities
 
+with column5:
+
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
+
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
+        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
+    
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
             .query("location in @locations") \
-            .query("bedrooms >= @low_room and bedrooms <= @high_room")
+            .query("bedrooms >= @low_room and bedrooms <= @high_room") \
+            .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
 ordered_columns = ['image', 'location', 'price', 'area', \
-                   'price_per_m2', 'bedrooms', 'source','title', 'url']
+                   'price_per_m2', 'bedrooms', 'query_date','title', 'url']
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="price_per_m2"),
@@ -94,8 +110,7 @@ st.dataframe(
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "bedrooms" : st.column_config.NumberColumn('🏨Room'),
         "location" : st.column_config.TextColumn('🌍City'),
-        "location" : st.column_config.TextColumn('Address'),
-        "source" : st.column_config.TextColumn('⚓Source'),
+        "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "title" : st.column_config.TextColumn('📕Title'),
         "url" : st.column_config.LinkColumn('🔗URL')
     },
