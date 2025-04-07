@@ -28,7 +28,8 @@ with column1:
 
 # Total cost including additional fees
 total_cost = price * (1 + (grunderwerb + notar + grundbuch + provision) / 100)
-loan_amount = total_cost * (1 - eigen / 100)
+#loan_amount = total_cost * (1 - eigen / 100)
+loan_amount = 152000
 annual_interest = loan_amount * zinsen / 100
 annuitat =  loan_amount * (zinsen + tilgung) / 100 / 12
 
