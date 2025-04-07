@@ -17,8 +17,8 @@ with column1:
     price = st.number_input('Real Estate Price', value=170000)
     eigen = st.number_input('Eigenkapital [%]', value=20.0)
 
-    zinsen = st.number_input('Zinssatz [%/year]', value=3.8)
-    tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
+    zinsen = st.number_input('Zinssatz [%/year]', value=3.94)
+    tilgung = st.number_input('Tilgungssatz [%/year]', value=3.0)
     years = st.number_input('Years', value=5, key=int)
 
     st.subheader("Tax")
