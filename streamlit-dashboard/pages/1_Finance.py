@@ -15,7 +15,7 @@ with column1:
     grundbuch = st.number_input('Grundbucheintrag [%]', value=0.5)
     provision = st.number_input('Maklerprovision [%]', value=3.57)
     price = st.number_input('Real Estate Price', value=170000)
-    eigen = st.number_input('Eigenkapital [%]', value=20)
+    eigen = st.number_input('Eigenkapital [%]', value=20.0)
 
     zinsen = st.number_input('Zinssatz [%/year]', value=3.8)
     tilgung = st.number_input('Tilgungssatz [%/year]', value=4.0)
