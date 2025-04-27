@@ -75,7 +75,7 @@ with column22:
     low_area, high_area = st.slider('Area', min_value=0, max_value=650, value=(60, 200))
   
 with column33:
-    low_room, high_room = st.slider('Room Number', min_value=0, max_value=50, value=(3, 6))
+    low_room, high_room = st.slider('Room Number', min_value=1, max_value=25, value=(3, 6))
 
 with column44:
     low_return, high_return = st.slider('Return in Years', min_value=0, max_value=100, value=(0, 35))
@@ -133,7 +133,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
             .query("room >= @low_room and room <= @high_room")
 
-if distribution_types == "Buy":
+if "Buy" in distribution_types:
     df_query = df.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
