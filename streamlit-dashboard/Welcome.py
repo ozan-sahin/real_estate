@@ -69,7 +69,12 @@ column11, column22, column33, column44 = st.columns([2, 2, 2, 2])
 column55, column66, column77, column88, column99= st.columns([2, 2, 2, 2, 2])
 
 with column11:
-    low_price, high_price = st.slider('Price Range', min_value=0, max_value=10000000, value=(0, 500000))
+    low_price, high_price = st.slider('Price Range', min_value=0, max_value=1000000, value=(0, 500000))
+    all_price_options = st.checkbox("Select whole price range", value=False)
+
+    if all_price_options:
+        high_price = df.price.max()
+        low_price = df.price.min()
 
 with column22:
     low_area, high_area = st.slider('Area', min_value=0, max_value=650, value=(60, 200))
