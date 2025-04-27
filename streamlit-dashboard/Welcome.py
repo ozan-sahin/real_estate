@@ -92,6 +92,10 @@ with column55:
 
 with column66:
     states = st.multiselect("State", df.state.unique().tolist(), "Nordrhein-Westfalen")
+    all_state_options = st.checkbox("Select all states", value=False)
+
+    if all_state_options:
+        states = df.state.unique().tolist()
 
 with column77:
     distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Rent"])
