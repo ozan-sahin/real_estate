@@ -116,25 +116,32 @@ with column99:
         dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
     else:
         dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
-
-    # dates = st.multiselect("Creation Date", df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist(), date_to_select)
-    # all_options = st.checkbox("Select all dates", value=False)
-
-    # if all_options:
-    #     dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 #queried dataframe
-df_query = df.query("price >= @low_price and price <= @high_price") \
-            .query("area >= @low_area and area <= @high_area") \
-            .query("city in @locations") \
-            .query("estate_type in @types") \
-            .query("state in @states") \
-            .query("distribution_type in @distribution_types") \
-            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
-            .query("room >= @low_room and room <= @high_room")
+#Needed to be modified because return filter only works if real estate is for sale
+#27.04.2025
 
 if "Rent" not in distribution_types:
-    df_query = df.query("return_in_years >= @low_return and return_in_years <= @high_return")
+
+    df_query = df.query("price >= @low_price and price <= @high_price") \
+                .query("area >= @low_area and area <= @high_area") \
+                .query("city in @locations") \
+                .query("estate_type in @types") \
+                .query("state in @states") \
+                .query("distribution_type in @distribution_types") \
+                .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+                .query("room >= @low_room and room <= @high_room") \
+                .query("return_in_years >= @low_return and return_in_years <= @high_return")
+else:
+
+    df_query = df.query("price >= @low_price and price <= @high_price") \
+                .query("area >= @low_area and area <= @high_area") \
+                .query("city in @locations") \
+                .query("estate_type in @types") \
+                .query("state in @states") \
+                .query("distribution_type in @distribution_types") \
+                .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+                .query("room >= @low_room and room <= @high_room")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
                     'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
