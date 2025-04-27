@@ -127,8 +127,10 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("state in @states") \
             .query("distribution_type in @distribution_types") \
             .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
-            .query("room >= @low_room and room <= @high_room") \
-            .query("return_in_years >= @low_return and return_in_years <= @high_return")
+            .query("room >= @low_room and room <= @high_room")
+
+if distribution_types == "Buy":
+    df_query = df.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
                     'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
