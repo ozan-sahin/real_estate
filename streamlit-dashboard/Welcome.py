@@ -133,7 +133,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
             .query("room >= @low_room and room <= @high_room")
 
-if "Buy" in distribution_types:
+if "Rent" not in distribution_types:
     df_query = df.query("return_in_years >= @low_return and return_in_years <= @high_return")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
