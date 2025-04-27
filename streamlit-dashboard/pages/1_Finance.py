@@ -23,7 +23,9 @@ with column1:
 
     st.subheader("Tax")
     gebaude_wert_anteil = st.number_input('Gebäudewertanteil [%]', value=85)
-    price_per_m2 = st.number_input('Price [€/m2]', value=14.0)
+
+    st.subheader("Rent Income Parameters")
+    price_per_m2 = st.number_input('Price [€/m2]', value=14.5)
     rent_income_ = st.number_input('Monthly Rent Income', value=price_per_m2*65)
 
 # Total cost including additional fees
@@ -110,7 +112,8 @@ with column2:
         tile.metric(label="Cashflow", value=f"💶{(65 * price_per_m2 - df_amortization.loc[1,'Total Payment']):,.0f} €")
     with column222:
         tile = column222.container(height=None, border=True)
-        tile.metric(label="Eigenkapital Yield", value=f"📈{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
+        #tile.metric(label="Eigenkapital Yield", value=f"📈{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
+        tile.metric(label="Return of Investment", value=f"📈{(total_cost / rent_income_ / 12):,.1f} years")
     with column333:
         tile = column333.container(height=None, border=True)
         tile.metric(label="Amortization Period", value=f"📅{amortization_in_total / 12:,.1f} years")
