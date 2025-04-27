@@ -78,7 +78,7 @@ with column33:
     low_room, high_room = st.slider('Room Number', min_value=1, max_value=25, value=(3, 6))
 
 with column44:
-    low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types', min_value=0, max_value=100, value=(0, 35))
+    low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 35))
 
 series_city = df.city.value_counts()
 common_cities = series_city[series_city > 15].index.tolist()
