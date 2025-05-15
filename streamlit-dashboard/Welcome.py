@@ -77,20 +77,20 @@ with column11:
         low_price = df.price.min()
 
 with column22:
-    low_area, high_area = st.slider('Area', min_value=0, max_value=650, value=(60, 200))
+    low_area, high_area = st.slider('Area', min_value=0, max_value=650, value=(60, 400))
   
 with column33:
-    low_room, high_room = st.slider('Room Number', min_value=1, max_value=25, value=(3, 6))
+    low_room, high_room = st.slider('Room Number', min_value=1, max_value=25, value=(1, 8))
 
 with column44:
-    low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 35))
+    low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 25))
 
 series_city = df.city.value_counts()
-common_cities = series_city[series_city > 15].index.tolist()
+common_cities = series_city[series_city > 10].index.tolist()
 
 with column55:
     locations = st.multiselect("Cities", common_cities,["Düsseldorf"])
-    all_options = st.checkbox("Select all cities", value=False)
+    all_options = st.checkbox("Select all cities", value=True)
 
     if all_options:
         locations = common_cities
@@ -103,10 +103,10 @@ with column66:
         states = df.state.unique().tolist()
 
 with column77:
-    distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Rent"])
+    distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Buy"])
 
 with column88:
-    types = st.multiselect("Estate Type", ["apartment", "house"],["apartment"])
+    types = st.multiselect("Estate Type", ["apartment", "house"],["apartment", "house"])
 
 with column99:
 
