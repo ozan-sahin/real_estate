@@ -50,9 +50,11 @@ with column5:
     tile.write("Mean return in years")
     tile.subheader(f"📈 {round(df.return_in_years.mean().round())}")
 with column6:
-    today = datetime.date.today()
-    t = today.strftime("%Y-%m-%d")
-    added_today = df.query("query_date == @t").shape[0]
+    # today = datetime.date.today()
+    # t = today.strftime("%Y-%m-%d")
+    # added_today = df.query("query_date == @t").shape[0]
+    today = pd.Timestamp.today().date()
+    added_today = df.query("query_date == @today").shape[0]
     tile = column6.container(height=None, border=True)
     tile.write("New ads published today")
     tile.subheader(f"🆕{added_today}")
@@ -61,6 +63,7 @@ st.markdown("""---""")
 
 df['creation_date'] = pd.to_datetime(df['creation_date'])
 df['update_date'] = pd.to_datetime(df['update_date'])
+df['query_date'] = pd.to_datetime(df['query_date'])
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
@@ -235,7 +238,7 @@ with column2:
             st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, use_container_width=True)
 
 #Today's Bargains
-st.header("Today's Bargains)
+st.header("Today's Bargains")
 date_to_filter = pd.Timestamp.today().date()
 
 if date_to_filter not in df["query_date"].dt.date.unique().tolist():
