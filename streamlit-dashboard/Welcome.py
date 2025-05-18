@@ -258,8 +258,8 @@ st.dataframe(df_today, column_config={
     "city" : st.column_config.TextColumn('🏙️City'),
     "url" : st.column_config.LinkColumn('🔗URL'),
     "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
-    "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears')},
-    use_container_width=True
+    "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears')
+    }
 )
 
 #---- HIDE STREAMLIT STYLE ----
