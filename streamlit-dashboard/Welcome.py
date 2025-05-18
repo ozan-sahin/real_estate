@@ -234,6 +234,30 @@ with column2:
     except:
             st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, use_container_width=True)
 
+#Today's Bargains
+st.header("Today's Bargains)
+date_to_filter = pd.Timestamp.today().date()
+
+if date_to_filter not in df["query_date"].dt.date.unique().tolist():
+    df_today = pd.DataFrame()
+
+else:
+    df_today = df.query("query_date == @date_to_filter and distribution_type == 'Buy'") \
+                .sort_values("return_in_years") \
+                .pivot_table(index=["state", "city", "url"], values=["price_per_m2", "return_in_years"], aggfunc="mean") \
+                .sort_index().round(2) \
+                .style.applymap(lambda v: 'background-color: lightgreen' if v < 17.0 else '', subset=['return_in_years']) \
+                .applymap(lambda v: 'background-color: lightblue' if v < 2500.0 else '', subset=['price_per_m2']) \
+                .format(precision=2)
+
+st.dataframe(df_today, column_config={
+    "state" : st.column_config.TextColumn('🏚️State'),
+    "city" : st.column_config.TextColumn('🏙️City'),
+    "url" : st.column_config.LinkColumn('🔗URL'),
+    "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
+    "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears')},
+    hide_index=True,use_container_width=True
+)
 
 #---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
