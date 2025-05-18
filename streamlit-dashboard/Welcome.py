@@ -26,6 +26,10 @@ st.title(":house: Welcome to Real Estate Analytics")
 
 df = conn.read()
 
+df['creation_date'] = pd.to_datetime(df['creation_date'])
+df['update_date'] = pd.to_datetime(df['update_date'])
+df['query_date'] = pd.to_datetime(df['query_date'])
+
 #df_coord = conn2.read()
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
@@ -60,10 +64,6 @@ with column6:
     tile.subheader(f"🆕{added_today}")
 
 st.markdown("""---""")
-
-df['creation_date'] = pd.to_datetime(df['creation_date'])
-df['update_date'] = pd.to_datetime(df['update_date'])
-df['query_date'] = pd.to_datetime(df['query_date'])
 
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
