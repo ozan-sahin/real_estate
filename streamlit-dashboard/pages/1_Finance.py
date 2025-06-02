@@ -30,8 +30,8 @@ with column1:
 
 # Total cost including additional fees
 total_cost = price * (1 + (grunderwerb + notar + grundbuch + provision) / 100)
-#loan_amount = total_cost * (1 - eigen / 100)
-loan_amount = 152000
+loan_amount = total_cost * (1 - eigen / 100)
+#loan_amount = 152000
 annual_interest = loan_amount * zinsen / 100
 annuitat =  loan_amount * (zinsen + tilgung) / 100 / 12
 
@@ -84,8 +84,8 @@ with column2:
         tile.metric(label="Eigenkapital", value=f"💰{total_cost*eigen/100:,.0f} €")
     with column22:
         tile = column22.container(height=None, border=True)
-        #tile.metric(label="Money Borrowed", value=f"💸{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
-        tile.metric(label="Money Borrowed", value=f"💸{152000:,.0f} €")
+        tile.metric(label="Money Borrowed", value=f"💸{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
+        #tile.metric(label="Money Borrowed", value=f"💸{152000:,.0f} €")
     with column33:
         tile = column33.container(height=None, border=True)
         tile.metric(label="Remaining Debt", value=f"📉{df_amortization.loc[month-1, 'Remaining Debt'].round():,.0f} €")
