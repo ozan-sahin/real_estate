@@ -80,51 +80,51 @@ with column2:
     column444, column555, column666 = st.columns(3)
 
     with column11:
-        tile = column11.container(height=None, border=True)
+        tile = column11.container(height="content", border=True)
         tile.metric(label="Eigenkapital", value=f"💰{total_cost*eigen/100:,.0f} €")
     with column22:
-        tile = column22.container(height=None, border=True)
+        tile = column22.container(height="content", border=True)
         tile.metric(label="Money Borrowed", value=f"💸{price*(1 + (grunderwerb+notar+grundbuch+provision)/100)*(1 - eigen/100):,.0f} €")
         #tile.metric(label="Money Borrowed", value=f"💸{152000:,.0f} €")
     with column33:
-        tile = column33.container(height=None, border=True)
+        tile = column33.container(height="content", border=True)
         tile.metric(label="Remaining Debt", value=f"📉{df_amortization.loc[month-1, 'Remaining Debt'].round():,.0f} €")
     with column44:
-        tile = column44.container(height=None, border=True)
+        tile = column44.container(height="content", border=True)
         tile.metric(label="Total Interest Payment", value=f"💵{df_amortization['Interest'].sum().round():,.0f} €")
     with column55:
-        tile = column55.container(height=None, border=True)
+        tile = column55.container(height="content", border=True)
         tile.metric(label="Total Payback", value=f"🔄{df_amortization['Payback'].sum().round():,.0f} €")
     with column66:
-        tile = column66.container(height=None, border=True)
+        tile = column66.container(height="content", border=True)
         tile.metric(label="Monthly Payment", value=f"🗓️{(df_amortization.loc[1,'Total Payment']).round():,.0f} €")
     with column77:
-        tile = column77.container(height=None, border=True)
+        tile = column77.container(height="content", border=True)
         tile.metric(label="Deductible interest payment p.a.", value=f"🧾{(df_amortization['Interest'].iloc[:12].sum()):,.0f} €")
     with column88:
-        tile = column88.container(height=None, border=True)
+        tile = column88.container(height="content", border=True)
         tile.metric(label="Building Amortization p.a.", value=f"🏛️{(gebaude_wert_anteil*price/ 100 * 0.025):,.0f} €")
     with column99:
-        tile = column99.container(height=None, border=True)
+        tile = column99.container(height="content", border=True)
         tile.metric(label="Renovation costs (in first three years at most 15%)", value=f"🛠️{(gebaude_wert_anteil*price/ 100 * 0.15):,.0f} €")
     with column111:
-        tile = column111.container(height=None, border=True)
+        tile = column111.container(height="content", border=True)
         tile.metric(label="Cashflow", value=f"💶{(65 * price_per_m2 - df_amortization.loc[1,'Total Payment']):,.0f} €")
     with column222:
-        tile = column222.container(height=None, border=True)
+        tile = column222.container(height="content", border=True)
         #tile.metric(label="Eigenkapital Yield", value=f"📈{(df_amortization.loc[1,'Total Payment'] / (price * eigen / 100) *100):,.1f} %")
         tile.metric(label="Return of Investment", value=f"📈{(total_cost / rent_income_ / 12):,.1f} years")
     with column333:
-        tile = column333.container(height=None, border=True)
+        tile = column333.container(height="content", border=True)
         tile.metric(label="Amortization Period", value=f"📅{amortization_in_total / 12:,.1f} years")
     with column444:
-        tile = column444.container(height=None, border=True)
+        tile = column444.container(height="content", border=True)
         tile.metric(label="Total Cost", value=f"📉{total_cost:,.0f} €")
     with column555:
-        tile = column555.container(height=None, border=True)
+        tile = column555.container(height="content", border=True)
         tile.metric(label="Nebenkosten perc", value=f"📈{((grunderwerb + notar + grundbuch + provision))} %")
     with column666:
-        tile = column666.container(height=None, border=True)
+        tile = column666.container(height="content", border=True)
         tile.metric(label="Makler Cost", value=f"📈{price*provision/100:,.0f} €")
 
     st.dataframe(df_amortization , column_config={
@@ -277,3 +277,4 @@ hide_st_style = """
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
