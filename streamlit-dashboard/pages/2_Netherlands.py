@@ -22,30 +22,30 @@ df = conn.read()
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
-    tile = column1.container(height=None, border=True)
+    tile = column1.container(height="content", border=True)
     tile.write("Number of ads analysed")
     tile.subheader(f"🧮{df.shape[0]}")
 with column2:
-    tile = column2.container(height=None, border=True)
+    tile = column2.container(height="content", border=True)
     tile.write("Mean price")
     tile.subheader(f"💶 {round(df.price.mean().round()/1000)} k€")
 with column3:
-    tile = column3.container(height=None, border=True)
+    tile = column3.container(height="content", border=True)
     tile.write("Mean number of rooms")
     tile.subheader(f"🏡 {df.room.mean().round(2)}")
 with column4:
-    tile = column4.container(height=None, border=True)
+    tile = column4.container(height="content", border=True)
     tile.write("Mean real estate area")
     tile.subheader(f"🏡 {round(df.area.mean().round()):,.0f} m²")
 with column5:
-    tile = column5.container(height=None, border=True)
+    tile = column5.container(height="content", border=True)
     tile.write("Mean unit price")
     tile.subheader(f"📈 {round(df.price_per_m2.mean().round()):,.0f} €/m²")
 with column6:
     today = datetime.date.today()
     t = today.strftime("%Y-%m-%d")
     added_today = df.query("query_date == @t").shape[0]
-    tile = column6.container(height=None, border=True)
+    tile = column6.container(height="content", border=True)
     tile.write("New ads published today")
     tile.subheader(f"🆕{added_today}")
 
@@ -242,3 +242,4 @@ hide_st_style = """
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
