@@ -34,23 +34,23 @@ df['query_date'] = pd.to_datetime(df['query_date'])
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
-    tile = column1.container(height=None, border=True)
+    tile = column1.container(height="content", border=True)
     tile.write("Number of ads analysed")
     tile.subheader(f"🧮{df.shape[0]}")
 with column2:
-    tile = column2.container(height=None, border=True)
+    tile = column2.container(height="content", border=True)
     tile.write("Mean price")
     tile.subheader(f"💶 {round(df.price.mean().round()/1000)} k€")
 with column3:
-    tile = column3.container(height=None, border=True)
+    tile = column3.container(height="content", border=True)
     tile.write("Number of houses")
     tile.subheader(f"🏡 {df.estate_type.value_counts()['house']}")
 with column4:
-    tile = column4.container(height=None, border=True)
+    tile = column4.container(height="content", border=True)
     tile.write("Number of apartments")
     tile.subheader(f"🏢 {df.estate_type.value_counts()['apartment']}")
 with column5:
-    tile = column5.container(height=None, border=True)
+    tile = column5.container(height="content", border=True)
     tile.write("Mean return in years")
     tile.subheader(f"📈 {round(df.return_in_years.mean().round())}")
 with column6:
@@ -59,7 +59,7 @@ with column6:
     # added_today = df.query("query_date == @t").shape[0]
     today = pd.Timestamp.today().date()
     added_today = df.query("query_date == @today").shape[0]
-    tile = column6.container(height=None, border=True)
+    tile = column6.container(height="content", border=True)
     tile.write("New ads published today")
     tile.subheader(f"🆕{added_today}")
 
