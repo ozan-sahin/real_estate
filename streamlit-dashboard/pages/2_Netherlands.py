@@ -44,7 +44,7 @@ with column5:
     tile.subheader(f"📈 {round(df.price_per_m2.mean().round()):,.0f} €/m²")
 with column6:
     today = datetime.date.today()
-    t = today.strftime("%Y-%m-%d")
+    t = today.strftime("%d.%m.%Y")
     added_today = df.query("query_date == @t").shape[0]
     tile = column6.container(height="content", border=True)
     tile.write("New ads published today")
