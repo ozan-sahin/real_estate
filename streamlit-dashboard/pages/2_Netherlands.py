@@ -98,7 +98,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
 ordered_columns = ['image', 'address', 'city', 'price', 'area', \
-                   'price_per_m2', 'room', 'source', 'url']
+                   'price_per_m2', 'room', 'query_date', 'source', 'url']
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="price_per_m2"),
