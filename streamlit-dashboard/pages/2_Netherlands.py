@@ -74,13 +74,27 @@ with column4:
 
     if all_options:
         locations = common_cities
+        
+with column5:
 
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
+
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
+        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
             .query("city in @locations") \
-            .query("room >= @low_room and room <= @high_room")
+            .query("room >= @low_room and room <= @high_room") \
+            .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
 ordered_columns = ['image', 'address', 'city', 'price', 'area', \
                    'price_per_m2', 'room', 'source', 'url']
