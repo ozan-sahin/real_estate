@@ -108,6 +108,7 @@ st.dataframe(
         "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "room" : st.column_config.NumberColumn('🏨Room'),
+        "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "city" : st.column_config.TextColumn('🌍City'),
         "address" : st.column_config.TextColumn('Address'),
         "source" : st.column_config.TextColumn('⚓Source'),
