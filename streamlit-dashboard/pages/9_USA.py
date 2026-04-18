@@ -58,24 +58,19 @@ with column1:
 with column2:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
 
-series_state = df.state.value_counts()
-common_states = series_state[series_state > 10].index.tolist()
-series_city = df.city.value_counts()
-common_cities = series_city[series_city > 10].index.tolist()
-
 with column4:
-    states = st.multiselect("States", df.city.unique().tolist(),[])
+    states = st.multiselect("States", df.state.unique().sort_values().tolist(),[])
     all_options = st.checkbox("Select all states", value=True)
 
     if all_options:
-        states = df.city.unique().tolist()
+        states = df.state.unique().sort_values().tolist()
 
 with column5:
-    cities = st.multiselect("Cities", common_cities,[])
+    cities = st.multiselect("Cities", df.city.unique().sort_values().tolist(),[])
     all_options_cities = st.checkbox("Select all cities", value=True)
 
     if all_options_cities:
-        cities = common_cities
+        cities = df.city.unique().sort_values().tolist()
 
 with column6:
 
