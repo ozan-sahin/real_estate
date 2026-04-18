@@ -94,12 +94,13 @@ with column6:
     else:
         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
-#queried dataframe
-# df_query = df.query("price >= @low_price and price <= @high_price") \
-#             .query("area_m2 >= @low_area and area_m2 <= @high_area") \
-#             .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
+df_query = df.query("price >= @low_price and price <= @high_price") \
+            .query("area >= @low_area and area <= @high_area") \
+            .query("city in @locations") \
+            .query("state in @states") \
+            .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+            .query("room >= @low_room and room <= @high_room").copy()
 
-df_query = df.query("state_code == 'TX' and city == 'Austin'").copy()
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
 
