@@ -14,7 +14,7 @@ conn = st.connection("gsheets_usa", type=GSheetsConnection)
 st.title("🌭 USA Real Estate Market")
 
 df = conn.read()
-df['query_date'] = pd.to_datetime(df['query_date'])
+df['query_date'] = pd.to_datetime(df['query_date'], format= '%Y-%m-%d')
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
@@ -39,7 +39,7 @@ with column5:
     tile.subheader(f"📈 {round(df.price_per_m2.mean().round()):,.0f} $/m²")
 with column6:
     today = datetime.date.today()
-    t = today.strftime("%d.%m.%Y")
+    t = today.strftime('%Y-%m-%d')
     added_today = df.query("query_date == @t").shape[0]
     tile = column6.container( border=True)
     tile.write("New ads published today")
