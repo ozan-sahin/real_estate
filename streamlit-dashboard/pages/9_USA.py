@@ -57,9 +57,6 @@ with column1:
 
 with column2:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
-  
-with column3:
-    low_room, high_room = st.select_slider('Room Number', options=range(0,50), value=(3,6))
 
 series_state = df.state.value_counts()
 common_states = series_state[series_state > 10].index.tolist()
@@ -98,8 +95,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
             .query("city in @cities") \
             .query("state in @states") \
-            # .query("query_date.dt.strftime('%d.%m.%Y') in @dates") \
-            # .query("bedrooms >= @low_room and bedrooms <= @high_room").copy()
+            .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
 
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
