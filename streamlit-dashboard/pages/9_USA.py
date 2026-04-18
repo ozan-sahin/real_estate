@@ -66,11 +66,11 @@ with column4:
         states = df.state.unique().sort_values().tolist()
 
 with column5:
-    cities = st.multiselect("Cities", df.city.unique().sort_values().tolist(),[])
+    cities = st.multiselect("Cities", df.city.sort_values().unique().tolist(),[])
     all_options_cities = st.checkbox("Select all cities", value=True)
 
     if all_options_cities:
-        cities = df.city.unique().sort_values().tolist()
+        cities = df.city.sort_values().unique().tolist()
 
 with column6:
 
