@@ -96,7 +96,7 @@ with column6:
 
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            .query("city in @locations") \
+            .query("city in @cities") \
             .query("state in @states") \
             .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
             .query("room >= @low_room and room <= @high_room").copy()
