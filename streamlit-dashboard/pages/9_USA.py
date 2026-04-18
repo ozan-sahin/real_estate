@@ -98,8 +98,8 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
             .query("city in @cities") \
             .query("state in @states") \
-            .query("query_date.dt.strftime('%d.%m.%Y') in @dates") \
-            .query("bedrooms >= @low_room and bedrooms <= @high_room").copy()
+            # .query("query_date.dt.strftime('%d.%m.%Y') in @dates") \
+            # .query("bedrooms >= @low_room and bedrooms <= @high_room").copy()
 
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
