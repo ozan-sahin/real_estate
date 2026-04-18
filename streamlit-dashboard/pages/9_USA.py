@@ -92,7 +92,7 @@ with column6:
         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
 df_query = df.query("price >= @low_price and price <= @high_price") \
-            .query("area >= @low_area and area <= @high_area") \
+            .query("area_m2 >= @low_area and area_m2 <= @high_area") \
             .query("city in @cities") \
             .query("state in @states") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
