@@ -105,7 +105,7 @@ st.dataframe(
     column_config={
         "image": st.column_config.ImageColumn('📷Image', width="small"),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f €/m²"),
-        "price" : st.column_config.NumberColumn('💶Price',format="%.0f €"),
+        "price" : st.column_config.NumberColumn('💶Price',format="%,.0f €"),
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "room" : st.column_config.NumberColumn('🏨Room'),
         "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
