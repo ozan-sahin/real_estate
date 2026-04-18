@@ -67,11 +67,11 @@ series_city = df.city.value_counts()
 common_cities = series_city[series_city > 10].index.tolist()
 
 with column4:
-    locations = st.multiselect("States", common_states,[])
+    states = st.multiselect("States", common_states,[])
     all_options = st.checkbox("Select all states", value=True)
 
     if all_options:
-        locations = common_states
+        states = common_states
 
 with column5:
     cities = st.multiselect("Cities", common_cities,[])
