@@ -74,7 +74,7 @@ with column4:
         locations = common_states
 
 with column5:
-    cities = st.multiselect("Cities", common_states,[])
+    cities = st.multiselect("Cities", common_cities,[])
     all_options_cities = st.checkbox("Select all cities", value=True)
 
     if all_options_cities:
