@@ -50,7 +50,7 @@ st.markdown("""---""")
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'query_date', 'url']
 
-column1, column2, column3, column4, column5, column6 = st.columns([2, 2, 1, 2, 2])
+column1, column2, column3, column4, column5, column6 = st.columns([2, 2, 1, 2, 2, 2])
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0, 200_000_001, 10_000), value=(0,500000))
