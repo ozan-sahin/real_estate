@@ -14,7 +14,7 @@ conn = st.connection("gsheets_usa", type=GSheetsConnection)
 st.title("🌭 USA Real Estate Market")
 
 df = conn.read()
-df['query_date'] = pd.to_datetime(df['query_date'], format="%Y-%m-%d")
+df['query_date'] = pd.to_datetime(df['query_date'])
 
 column1, column2, column3, column4, column5, column6 = st.columns(6)
 with column1:
