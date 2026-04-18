@@ -59,11 +59,11 @@ with column2:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
 
 with column4:
-    states = st.multiselect("States", df.state.unique().sort_values().tolist(),[])
+    states = st.multiselect("States", df.state.sort_values().unique().tolist(),[])
     all_options = st.checkbox("Select all states", value=True)
 
     if all_options:
-        states = df.state.unique().sort_values().tolist()
+        states = df.state.sort_values().unique().tolist()
 
 with column5:
     cities = st.multiselect("Cities", df.city.sort_values().unique().tolist(),[])
