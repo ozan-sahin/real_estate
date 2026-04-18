@@ -55,21 +55,21 @@ column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 3, 2])
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0, 200_000_001, 10_000), value=(0,500000))
 
-# with column2:
-#     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
+with column2:
+    low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
   
-# # with column3:
-# #     low_room, high_room = st.select_slider('Room Number', options=range(0,50), value=(3,6))
+with column3:
+    low_room, high_room = st.select_slider('Room Number', options=range(0,50), value=(3,6))
 
-# series_state = df.state.value_counts()
-# common_states = series_state[series_state > 10].index.tolist()
+series_state = df.state.value_counts()
+common_states = series_state[series_state > 10].index.tolist()
 
-# with column4:
-#     locations = st.multiselect("States", common_states,[])
-#     all_options = st.checkbox("Select all states", value=True)
+with column4:
+    locations = st.multiselect("States", common_states,[])
+    all_options = st.checkbox("Select all states", value=True)
 
-#     if all_options:
-#         locations = common_states
+    if all_options:
+        locations = common_states
 
 # with column5:
 
