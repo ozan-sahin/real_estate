@@ -39,7 +39,7 @@ with column5:
     tile.subheader(f"📈 {round(df.price_per_m2.mean().round()):,.0f} $/m²")
 with column6:
     today = datetime.date.today()
-    t = today.strftime("%Y-%m-%d")
+    t = today.strftime("%d.%m.%Y")
     added_today = df.query("query_date == @t").shape[0]
     tile = column6.container( border=True)
     tile.write("New ads published today")
@@ -50,7 +50,7 @@ st.markdown("""---""")
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'query_date', 'url']
 
-column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 3, 2])
+column1, column2, column3, column4, column5, column6 = st.columns([2, 2, 1, 2, 2])
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0, 200_000_001, 10_000), value=(0,500000))
@@ -63,6 +63,8 @@ with column3:
 
 series_state = df.state.value_counts()
 common_states = series_state[series_state > 10].index.tolist()
+series_city = df.city.value_counts()
+common_cities = series_city[series_city > 10].index.tolist()
 
 with column4:
     locations = st.multiselect("States", common_states,[])
@@ -71,20 +73,26 @@ with column4:
     if all_options:
         locations = common_states
 
-# with column5:
+with column5:
+    cities = st.multiselect("Cities", common_states,[])
+    all_options_cities = st.checkbox("Select all cities", value=True)
 
-#     date_options = ["Today", "Last Week", "Last Month", "All Time"]
-#     date_to_select = st.selectbox("Date Range", date_options)
+    if all_options_cities:
+        cities = common_cities
 
-#     if date_to_select == "Today":
-#         dates = [datetime.date.today().strftime('%Y-%m-%d')]
-#     elif date_to_select == "Last Week":
-#         dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
-#     elif date_to_select == "Last Month":
-#         dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
-#     else:
-#         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
+with column6:
 
+    date_options = ["Today", "Last Week", "Last Month", "All Time"]
+    date_to_select = st.selectbox("Date Range", date_options)
+
+    if date_to_select == "Today":
+        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+    elif date_to_select == "Last Week":
+        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+    elif date_to_select == "Last Month":
+        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+    else:
+        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
 
 #queried dataframe
 # df_query = df.query("price >= @low_price and price <= @high_price") \
