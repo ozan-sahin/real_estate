@@ -64,11 +64,11 @@ series_city = df.city.value_counts()
 common_cities = series_city[series_city > 10].index.tolist()
 
 with column4:
-    states = st.multiselect("States", common_states,[])
+    states = st.multiselect("States", df.city.unique().tolist(),[])
     all_options = st.checkbox("Select all states", value=True)
 
     if all_options:
-        states = common_states
+        states = df.city.unique().tolist()
 
 with column5:
     cities = st.multiselect("Cities", common_cities,[])
