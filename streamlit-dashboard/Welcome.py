@@ -173,7 +173,7 @@ st.dataframe(
         "url" : st.column_config.LinkColumn('🔗URL'),
         "makler" : st.column_config.TextColumn('Makler')
     },
-    hide_index=True,use_container_width=True
+    hide_index=True,width="stretch"
 )
 
 # Filter and group data
@@ -233,9 +233,9 @@ with column2:
     try:
         lat, lon = get_lat_lon(df.iloc[index].zip_code + " " + df.iloc[index].city+ " " + df.iloc[index].district)
         if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=6.5, use_container_width=True)
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=6.5, width="stretch")
     except:
-            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, use_container_width=True)
+            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, width="stretch")
 
 #Today's Bargains
 st.header("Today's Bargains")
