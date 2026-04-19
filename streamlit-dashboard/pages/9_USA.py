@@ -57,12 +57,19 @@ with column1:
 with column2:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
 
-with column4:
+with column3:
     states = st.multiselect("States", df.state.sort_values().unique().tolist(),[])
     all_options = st.checkbox("Select all states", value=True)
 
     if all_options:
         states = df.state.sort_values().unique().tolist()
+        
+with column4:
+    counties = st.multiselect("County", df.county.sort_values().unique().tolist(),[])
+    all_options_counties = st.checkbox("Select all counties", value=True)
+
+    if all_options:
+        counties = df.county.sort_values().unique().tolist()
 
 with column5:
     cities = st.multiselect("Cities", df.city.sort_values().unique().tolist(),[])
@@ -89,6 +96,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area_m2 >= @low_area and area_m2 <= @high_area") \
             .query("city in @cities") \
             .query("state in @states") \
+            .query("county in @counties") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
 
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
