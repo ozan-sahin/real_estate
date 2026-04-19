@@ -57,7 +57,7 @@ ordered_columns = ['image', 'address', 'city', 'price', 'area', \
 column1, column2, column3, column4, column5 = st.columns([2, 2, 1, 3, 2], gap="large")
 
 with column1:
-    low_price, high_price = st.select_slider('Price Range', options=range(0,2000001), value=(0,500000))
+    low_price, high_price = st.select_slider('Price Range', options=range(0,20_000_000, 10_000), value=(0,500000))
 
 with column2:
     low_area, high_area = st.select_slider('Area', options=range(0,650), value=(60,200))
