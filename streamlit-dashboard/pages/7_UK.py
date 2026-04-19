@@ -174,7 +174,7 @@ df_area_return = (
 
 fig = px.bar(
     df_area_return,
-    y='mean',
+    y='price_per_m2',
     x=df_area_return.index.tolist(),
 )
 
