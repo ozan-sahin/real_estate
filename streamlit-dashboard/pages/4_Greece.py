@@ -113,7 +113,7 @@ st.dataframe(
         "title" : st.column_config.TextColumn('📕Title'),
         "url" : st.column_config.LinkColumn('🔗URL')
     },
-    hide_index=True,use_container_width=True
+    hide_index=True,width="stretch"
 )
 
 # Filter and group data
@@ -166,9 +166,9 @@ with column2:
     try:
         lat, lon = get_lat_lon(df.iloc[index].location)
         if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=8, use_container_width=True)
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=8, width="stretch")
     except:
-            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=5.5, use_container_width=True)
+            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=5.5, width="stretch")
 
 
 
@@ -192,7 +192,7 @@ fig.update_layout(xaxis_title='Area of estate',yaxis_title='Mean unit price',
 
 with left_column:
     st.subheader("Mean unit price per m²")
-    left_column.plotly_chart(fig, use_container_width=True)
+    left_column.plotly_chart(fig, width="stretch")
 
 df2 = df[df.location.isin(most_popular_cities)] \
     .groupby(["location"])[["price_per_m2"]] \
@@ -219,7 +219,7 @@ fig3.update_layout(barmode="group",
 
 with middle_column:
     st.subheader("Average Price per m²")
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width="stretch")
 
 
 most_popular_cities = df.location.value_counts()[df.location.value_counts() > 10].index.tolist()
@@ -244,7 +244,7 @@ fig2.update_layout(
 
 with right_column:
     st.subheader("Average price of cities")
-    right_column.plotly_chart(fig2, use_container_width=True)
+    right_column.plotly_chart(fig2, width="stretch")
 
 
 # ---- HIDE STREAMLIT STYLE ----
