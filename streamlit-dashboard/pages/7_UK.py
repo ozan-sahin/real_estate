@@ -166,10 +166,11 @@ with column2:
 left_column, middle_column, right_column = st.columns([3,5, 5], gap="large")
 
 bins = [30,60,90,120,150,180,210]
-df['category'] = pd.cut(df['area'], bins)
+labels = [f"{bins[i]}-{bins[i+1]}" for i in range(len(bins)-1)]
+df['category'] = pd.cut(df['area'], bins, labels=labels)
 df_area_return = (
     df.groupby("category", observed=False)["price_per_m2"]
-    .mean()
+    .mean().reset_index()
 )
 
 fig = px.bar(
