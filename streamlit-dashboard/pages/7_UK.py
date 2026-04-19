@@ -167,8 +167,10 @@ left_column, middle_column, right_column = st.columns([3,5, 5], gap="large")
 
 bins = [30,60,90,120,150,180,210]
 df['category'] = pd.cut(df['area'], bins)
-df_area_return = df.groupby("category")["price_per_m2"].agg(["mean"])
-df_area_return.index = bins[:-1]
+df_area_return = (
+    df.groupby("category", observed=False)["price_per_m2"]
+    .mean()
+)
 
 fig = px.bar(
     df_area_return,
