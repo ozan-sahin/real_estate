@@ -68,7 +68,7 @@ with column4:
     counties = st.multiselect("County", df.county.sort_values().unique().tolist(),[])
     all_options_counties = st.checkbox("Select all counties", value=True)
 
-    if all_options:
+    if all_options_counties:
         counties = df.county.sort_values().unique().tolist()
 
 with column5:
