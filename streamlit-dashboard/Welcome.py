@@ -54,11 +54,8 @@ with column5:
     tile.write("Mean return in years")
     tile.subheader(f"📈 {round(df.return_in_years.mean().round())}")
 with column6:
-    # today = datetime.date.today()
-    # t = today.strftime("%Y-%m-%d")
-    # added_today = df.query("query_date == @t").shape[0]
-    today = pd.Timestamp.today().date()
-    added_today = df.query("query_date == @today").shape[0]
+    today = datetime.date.today()
+    added_today = df[df['query_date'].dt.date == today].shape[0]
     tile = column6.container(height="content", border=True)
     tile.write("New ads published today")
     tile.subheader(f"🆕{added_today}")
