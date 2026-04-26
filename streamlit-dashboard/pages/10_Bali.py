@@ -137,10 +137,10 @@ with column1:
         st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} €")
         st.metric(label="Area", value=f"{df.iloc[index].area:,.0f} m²")
         st.metric(label="Rooms", value=df.iloc[index].room)
-        st.metric(label="Neighorhood", value=df.iloc[index].address)
         
     with column1_3:
         st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta_color="inverse")
+        st.metric(label="Neighorhood", value=df.iloc[index].address)
     
 with column2:
     try:
