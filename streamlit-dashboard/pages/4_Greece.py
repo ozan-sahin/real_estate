@@ -92,7 +92,7 @@ with column5:
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            .query("municipality in @locations") \
+            .query("location in @locations") \
             .query("bedrooms >= @low_room and bedrooms <= @high_room") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
