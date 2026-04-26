@@ -149,7 +149,7 @@ else:
                 .query("room >= @low_room and room <= @high_room")
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
-                    'ref_price', 'sale_ratio', 'return_in_years', 'source', 'creation_date', 'url', "makler"]
+                    'ref_price', 'sale_ratio', 'return_in_years', 'creation_date', 'url', "makler"]
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="return_in_years"),
@@ -164,7 +164,7 @@ st.dataframe(
         "return_in_years" : st.column_config.NumberColumn('💰ReturnInYears'),
         "city" : st.column_config.TextColumn('🌍City'),
         "district" : st.column_config.TextColumn('📌District'),
-        "source" : st.column_config.TextColumn('⚓Source'),
+        # "source" : st.column_config.TextColumn('⚓Source'),
         "title" : st.column_config.TextColumn('📕Title'),
         "creation_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "url" : st.column_config.LinkColumn('🔗URL'),
