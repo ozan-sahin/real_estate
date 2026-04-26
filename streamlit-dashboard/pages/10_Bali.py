@@ -98,9 +98,9 @@ st.dataframe(
     df_query[ordered_columns].sort_values(by="price_per_m2"),
     column_config={
         "image": st.column_config.ImageColumn('📷Image', width="small"),
-        "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f $/m²"),
+        "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%.0f €/m²"),
         "title" : st.column_config.TextColumn('Title'),
-        "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f $"),
+        "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f €"),
         "address" : st.column_config.TextColumn('🏠Address'),
         "area" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "room" : st.column_config.TextColumn('🏨Bedrooms'),
