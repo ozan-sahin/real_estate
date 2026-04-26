@@ -246,8 +246,8 @@ else:
                 .sort_values("return_in_years") \
                 .pivot_table(index=["state", "city", "url"], values=["price_per_m2", "return_in_years"], aggfunc="mean") \
                 .sort_index().round(2) \
-                .style.applymap(lambda v: 'background-color: lightgreen' if v < 17.0 else '', subset=['return_in_years']) \
-                .applymap(lambda v: 'background-color: lightblue' if v < 2500.0 else '', subset=['price_per_m2']) \
+                .style.map(lambda v: 'background-color: lightgreen' if v < 17.0 else '', subset=['return_in_years']) \
+                .map(lambda v: 'background-color: lightblue' if v < 2500.0 else '', subset=['price_per_m2']) \
                 .format(precision=2)
 
 st.dataframe(df_today, column_config={
