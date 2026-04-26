@@ -88,11 +88,11 @@ with column5:
         dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
     else:
         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
-            
+      
 #queried dataframe
 df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("area >= @low_area and area <= @high_area") \
-            .query("location in @locations") \
+            .query("municipality in @locations") \
             .query("bedrooms >= @low_room and bedrooms <= @high_room") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates")
 
