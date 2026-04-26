@@ -6,12 +6,12 @@ import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
 from geopy.geocoders import Photon
 
-st.set_page_config(page_title="Bali Real Estate Market", page_icon="🌭", layout="wide")
+st.set_page_config(page_title="Bali Real Estate Market", page_icon="🌴", layout="wide")
 
 # Create a connection object.
 conn = st.connection("gsheets_bali", type=GSheetsConnection)
 
-st.title("🌭 Bali Real Estate Market")
+st.title("🌴 Bali Real Estate Market")
 
 df = conn.read()
 df['query_date'] = pd.to_datetime(df['query_date'])
@@ -32,7 +32,7 @@ with column3:
 with column4:
     tile = column4.container( border=True)
     tile.write("Mean real estate area")
-    tile.subheader(f"🏡 {round(df.area_m2.mean().round()):,.0f} m²")
+    tile.subheader(f"🏡 {round(df.area.mean().round()):,.0f} m²")
 with column5:
     tile = column5.container( border=True)
     tile.write("Mean unit price")
