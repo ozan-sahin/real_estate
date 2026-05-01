@@ -93,7 +93,7 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("city in @cities") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
 
-ordered_columns = ['image', 'title', 'address', 'price', 'surface', \
+ordered_columns = ['image', 'city', 'province', 'municipality','address', 'price', 'surface', \
                    'price_per_m2', 'rooms', 'query_date', 'url']
 
 st.dataframe(
@@ -101,7 +101,6 @@ st.dataframe(
     column_config={
         "image": st.column_config.ImageColumn('📷Image', width="small"),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%.0f €/m²"),
-        "title" : st.column_config.TextColumn('Title'),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f €"),
         "address" : st.column_config.TextColumn('🏠Address'),
         "surface" : st.column_config.NumberColumn('📐Surface',format="%0f m²"),
