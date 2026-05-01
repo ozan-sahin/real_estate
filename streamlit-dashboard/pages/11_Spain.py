@@ -136,7 +136,7 @@ with column2:
     lat = df.iloc[index].lat
     lon = df.iloc[index].lon
 
-    st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=11, width="stretch")
+    st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=7, width="stretch")
 
 
 # ---- HIDE STREAMLIT STYLE ----
