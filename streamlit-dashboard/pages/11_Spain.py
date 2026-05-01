@@ -10,7 +10,7 @@ import random
 st.set_page_config(page_title="Spanish Real Estate Market", page_icon="🐮", layout="wide")
 
 # Create a connection object.
-conn = st.connection("gsheets_bali", type=GSheetsConnection)
+conn = st.connection("gsheets_spain", type=GSheetsConnection)
 
 st.title("🐮 Spain Real Estate Market")
 
@@ -26,18 +26,18 @@ with column2:
     tile = column2.container( border=True)
     tile.write("Mean price")
     tile.subheader(f"💶 {round(df.price.mean().round()/1000)} k€")
-# with column3:
-#     tile = column3.container( border=True)
-#     tile.write("Mean number of bedrooms")
-#     tile.subheader(f"🏡 {df.rooms.dropna().mean().round(2)}")
-# with column4:
-#     tile = column4.container( border=True)
-#     tile.write("Mean real estate area")
-#     tile.subheader(f"🏡 {round(df.surface.mean().round()):,.0f} m²")
-# with column5:
-#     tile = column5.container( border=True)
-#     tile.write("Mean unit price")
-#     tile.subheader(f"📈 {round(df.price_per_m2.mean().round()):,.0f} €/m²")
+with column3:
+    tile = column3.container( border=True)
+    tile.write("Mean number of bedrooms")
+    tile.subheader(f"🏡 {df.rooms.dropna().mean().round(2)}")
+with column4:
+    tile = column4.container( border=True)
+    tile.write("Mean real estate area")
+    tile.subheader(f"🏡 {round(df.surface.mean().round()):,.0f} m²")
+with column5:
+    tile = column5.container( border=True)
+    tile.write("Mean unit price")
+    tile.subheader(f"📈 {round(df.price_per_m2.mean().round()):,.0f} €/m²")
 with column6:
     today = datetime.date.today()
     added_today = df[df['query_date'].dt.date == today].shape[0]
