@@ -50,7 +50,7 @@ st.markdown("""---""")
 ordered_columns = ['image', 'city', 'province', 'municipality', 'location', 'price', 'surface', \
                    'price_per_m2', 'rooms', 'query_date', 'url']
 
-column1, column2, column3, column6 = st.columns([2, 2, 1, 2])
+column1, column2, column3, column5, column6 = st.columns([2, 2, 1, 2, 2])
 
 with column1:
     low_price, high_price = st.select_slider('Price Range', options=range(0, 5_000_001, 10_000), value=(0,800000))
@@ -65,7 +65,6 @@ with column3:
     if all_options:
         provinces = df.province.sort_values().unique().tolist()
         
-
 with column5:
     cities = st.multiselect("Cities", df.city.sort_values().unique().tolist(),[])
     all_options_cities = st.checkbox("Select all cities", value=True)
