@@ -120,7 +120,7 @@ with column1:
             index = random.randrange(0, df.shape[0]-1)
         else:
             index = df.query("url == @link").index.values[0]
-        st.image(df.iloc[index].image, caption=df.iloc[index].title)
+        st.image(df.iloc[index].image, caption=df.iloc[index].location)
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
     with column1_2:
         st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} €")
