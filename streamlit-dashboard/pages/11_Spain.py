@@ -29,7 +29,7 @@ with column2:
 with column3:
     tile = column3.container( border=True)
     tile.write("Mean number of bedrooms")
-    tile.subheader(f"🏡 {df.rooms.mean().round(2)}")
+    tile.subheader(f"🏡 {df.rooms.dropna().mean().round(2)}")
 with column4:
     tile = column4.container( border=True)
     tile.write("Mean real estate area")
