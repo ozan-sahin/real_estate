@@ -93,9 +93,6 @@ df_query = df.query("price >= @low_price and price <= @high_price") \
             .query("city in @cities") \
             .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
 
-ordered_columns = ['image', 'city', 'province', 'municipality','address', 'price', 'surface', \
-                   'price_per_m2', 'rooms', 'query_date', 'url']
-
 st.dataframe(
     df_query[ordered_columns].sort_values(by="price_per_m2"),
     column_config={
