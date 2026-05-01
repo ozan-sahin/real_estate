@@ -47,7 +47,7 @@ with column6:
 
 st.markdown("""---""")
 
-ordered_columns = ['image', 'city', 'province', 'municipality','address', 'price', 'surface', \
+ordered_columns = ['image', 'city', 'province', 'municipality', 'location', 'price', 'surface', \
                    'price_per_m2', 'rooms', 'query_date', 'url']
 
 column1, column2, column3, column6 = st.columns([2, 2, 1, 2])
@@ -99,7 +99,7 @@ st.dataframe(
         "image": st.column_config.ImageColumn('📷Image', width="small"),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%.0f €/m²"),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f €"),
-        "address" : st.column_config.TextColumn('🏠Address'),
+        "location" : st.column_config.TextColumn('🏠Address'),
         "surface" : st.column_config.NumberColumn('📐Surface',format="%0f m²"),
         "rooms" : st.column_config.TextColumn('🏨Bedrooms'),
         "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
@@ -124,12 +124,13 @@ with column1:
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
     with column1_2:
         st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} €")
-        st.metric(label="Surface", value=f"{df.iloc[index].surface:,.0f} m²")
+        st.metric(label="Area", value=f"{df.iloc[index].surface:,.0f} m²")
         st.metric(label="Rooms", value=df.iloc[index].rooms)
         
     with column1_3:
         st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta_color="inverse")
-        st.metric(label="Neighorhood", value=df.iloc[index].address)
+        st.metric(label="City", value=df.iloc[index].city)
+        st.metric(label="Province", value=df.iloc[index].province)
     
 with column2:
     
