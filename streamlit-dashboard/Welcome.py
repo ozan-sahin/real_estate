@@ -65,60 +65,69 @@ st.markdown("""---""")
 ordered_columns = ['image', 'url', 'title', 'city', 'district', 'price', 'area', \
                    'price_per_m2', 'ref_price', 'sale_ratio', 'return_in_years', 'source']
 
+@st.cache_data
+def get_filter_options(df):
+    series_city = df.city.value_counts()
+    common_cities = series_city[series_city > 10].index.tolist()
+    states = sorted(df.state.dropna().unique().tolist())
+    price_max = int(df.price.max())
+    price_min = int(df.price.min())
+    area_max = int(df.area.max()) if df.area.max() <= 650 else 650
+    return common_cities, states, price_min, price_max, area_max
+
+common_cities, state_options, price_min, price_max, area_max = get_filter_options(df)
+
 column11, column22, column33, column44 = st.columns([2, 2, 2, 2])
-column55, column66, column77, column88, column99= st.columns([2, 2, 2, 2, 2])
+column55, column66, column77, column88, column99 = st.columns([2, 2, 2, 2, 2])
 
 with column11:
-    low_price, high_price = st.slider('Price Range', min_value=0, max_value=1000000, value=(0, 500000))
-    all_price_options = st.checkbox("Select whole price range", value=False)
-
+    all_price_options = st.checkbox("Whole price range", value=False)
     if all_price_options:
-        high_price = df.price.max()
-        low_price = df.price.min()
+        low_price, high_price = price_min, price_max
+    else:
+        low_price, high_price = st.slider(
+            'Price Range', min_value=0, max_value=1_000_000, value=(0, 500_000)
+        )
 
 with column22:
-    low_area, high_area = st.slider('Area', min_value=0, max_value=650, value=(60, 400))
-  
+    low_area, high_area = st.slider('Area', min_value=0, max_value=area_max, value=(60, 400))
+
 with column33:
     low_room, high_room = st.slider('Room Number', min_value=1, max_value=25, value=(1, 8))
 
 with column44:
-    low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 25))
-
-series_city = df.city.value_counts()
-common_cities = series_city[series_city > 10].index.tolist()
+    low_return, high_return = st.slider(
+        'Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 25)
+    )
 
 with column55:
-    locations = st.multiselect("Cities", common_cities,["Düsseldorf"])
     all_options = st.checkbox("Select all cities", value=True)
-
-    if all_options:
-        locations = common_cities
+    locations = common_cities if all_options else st.multiselect(
+        "Cities", common_cities, ["Düsseldorf"]
+    )
 
 with column66:
-    states = st.multiselect("State", df.state.unique().tolist(), "Nordrhein-Westfalen")
     all_state_options = st.checkbox("Select all states", value=False)
-
-    if all_state_options:
-        states = df.state.unique().tolist()
+    states = state_options if all_state_options else st.multiselect(
+        "State", state_options, ["Nordrhein-Westfalen"]
+    )
 
 with column77:
-    distribution_types = st.multiselect("Type" ,["Buy", "Rent"], ["Buy"])
+    distribution_types = st.multiselect("Type", ["Buy", "Rent"], ["Buy"])
 
 with column88:
-    types = st.multiselect("Estate Type", ["apartment", "house"],["apartment", "house"])
+    types = st.multiselect("Estate Type", ["apartment", "house"], ["apartment", "house"])
 
 with column99:
-
     date_options = ["Today", "Last Week", "Last Month", "All Time"]
     date_to_select = st.selectbox("Date Range", date_options)
-
+    today = datetime.date.today()
     if date_to_select == "Today":
-        dates = [datetime.date.today().strftime('%Y-%m-%d')]
+        dates = [today.strftime('%Y-%m-%d')]
     elif date_to_select == "Last Week":
-        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+        dates = pd.date_range(end=today, periods=7).strftime('%Y-%m-%d').tolist()
     elif date_to_select == "Last Month":
-        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+        dates = pd.date_range(end=today, periods=30).strftime('%Y-%m-%d').tolist()
     else:
         dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
