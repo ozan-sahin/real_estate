@@ -134,7 +134,7 @@ with column2:
     "Remaining Debt" : st.column_config.NumberColumn('Remaining Debt',format="%.0f €"),
     "Monthly" : st.column_config.NumberColumn('Monhtly',format="%.0f €")
     },
-    hide_index=True,use_container_width=True, height=500)
+    hide_index=True,width="content", height=500)
 
 fig3 = go.Figure()
 fig3.add_trace(go.Bar(
@@ -161,7 +161,7 @@ fig3.update_layout(
 )
 
 with column3:
-    column3.plotly_chart(fig3, use_container_width=True)
+    column3.plotly_chart(fig3, width="content")
 
 
 # st.subheader("Income Statement")
