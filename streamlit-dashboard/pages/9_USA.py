@@ -142,7 +142,7 @@ st.dataframe(
         "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "url" : st.column_config.LinkColumn('🔗URL')
     },
-    hide_index=True,width="stretch"
+    hide_index=True,width="content"
 )
 
 # Filter and group data
@@ -187,9 +187,9 @@ with column2:
     try:
         lat, lon = get_lat_lon(df.iloc[index].address)
         if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=11, width="stretch")
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=11, width="content")
     except:
-            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, width="stretch")
+            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, width="content")
 
 
 
