@@ -267,9 +267,9 @@ with column2:
     try:
         lat, lon = get_lat_lon(df.iloc[index].zip_code + " " + df.iloc[index].city+ " " + df.iloc[index].district)
         if lat and lon:
-            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=6.5, width="content")
+            st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=6.5)
     except:
-            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, width="content")
+            st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7)
 
 #Today's Bargains
 st.header("Today's Bargains")
