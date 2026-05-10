@@ -86,8 +86,6 @@ with column44:
     low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 25))
 
 series_city = df.city.value_counts()
-# GOOD - compute once and cache
-@st.cache_data
 common_cities = series_city[series_city > 10].index.tolist()
 
 with column55:
