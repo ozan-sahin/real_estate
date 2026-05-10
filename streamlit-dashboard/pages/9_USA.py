@@ -51,53 +51,77 @@ ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
 
 column1, column3, column4, column5, column6 = st.columns([4, 2, 2, 2, 1])
 
-with column1:
-    low_price, high_price = st.select_slider('Price Range', options=range(0, 10_000_001, 10_000), value=(0,800000))
+@st.cache_data
+def get_filter_options(df):
+    return {
+        'states': df.state.sort_values().unique().tolist(),
+        'counties': df.county.sort_values().unique().tolist(),
+        'cities': df.city.sort_values().unique().tolist(),
+    }
+
+@st.cache_data
+def filter_df(df, low_price, high_price, low_area, high_area,
+                  states, counties, cities, date_to_select):
+
+    if date_to_select == "Today":
+        date_mask = df['query_date'].dt.date == datetime.date.today()
+    elif date_to_select == "Last Week":
+        cutoff = datetime.date.today() - datetime.timedelta(days=7)
+        date_mask = df['query_date'].dt.date >= cutoff
+    elif date_to_select == "Last Month":
+        cutoff = datetime.date.today() - datetime.timedelta(days=30)
+        date_mask = df['query_date'].dt.date >= cutoff
+    else:
+        date_mask = pd.Series(True, index=df.index)
+
+    mask = (
+        date_mask &
+        df['price'].between(low_price, high_price) &
+        df['area_m2'].between(low_area, high_area) &
+        df['state'].isin(states) &
+        df['county'].isin(counties) &
+        df['city'].isin(cities)
+    )
+
+    return df[mask].copy()
+
+# --- UI ---
+options = get_filter_options(df)
 
 with column1:
-    low_area, high_area = st.select_slider('Area', options=range(0,750), value=(60,200))
+    low_price, high_price = st.select_slider('Price Range', options=range(0, 10_000_001, 10_000), value=(0, 800000))
+    low_area, high_area = st.select_slider('Area', options=range(0, 750), value=(60, 200))
 
 with column3:
-    states = st.multiselect("States", df.state.sort_values().unique().tolist(),[])
+    states = st.multiselect("States", options['states'], [])
     all_options = st.checkbox("Select all states", value=True)
-
     if all_options:
-        states = df.state.sort_values().unique().tolist()
-        
-with column4:
-    counties = st.multiselect("County", df.county.sort_values().unique().tolist(),[])
-    all_options_counties = st.checkbox("Select all counties", value=True)
+        states = options['states']
 
+with column4:
+    counties = st.multiselect("County", options['counties'], [])
+    all_options_counties = st.checkbox("Select all counties", value=True)
     if all_options_counties:
-        counties = df.county.sort_values().unique().tolist()
+        counties = options['counties']
 
 with column5:
-    cities = st.multiselect("Cities", df.city.sort_values().unique().tolist(),[])
+    cities = st.multiselect("Cities", options['cities'], [])
     all_options_cities = st.checkbox("Select all cities", value=True)
-
     if all_options_cities:
-        cities = df.city.sort_values().unique().tolist()
+        cities = options['cities']
 
 with column6:
-
     date_options = ["Today", "Last Week", "Last Month", "All Time"]
     date_to_select = st.selectbox("Date Range", date_options)
 
-    if date_to_select == "Today":
-        dates = [datetime.date.today().strftime('%Y-%m-%d')]
-    elif date_to_select == "Last Week":
-        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
-    elif date_to_select == "Last Month":
-        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
-    else:
-        dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
-
-df_query = df.query("price >= @low_price and price <= @high_price") \
-            .query("area_m2 >= @low_area and area_m2 <= @high_area") \
-            .query("city in @cities") \
-            .query("state in @states") \
-            .query("county in @counties") \
-            .query("query_date.dt.strftime('%Y-%m-%d') in @dates").copy()
+# --- Filter ---
+df_query = filter_df(
+    df,
+    low_price, high_price,
+    low_area, high_area,
+    tuple(states), tuple(counties), tuple(cities),  # tuples for cache hashing
+    date_to_select
+)
 
 ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
