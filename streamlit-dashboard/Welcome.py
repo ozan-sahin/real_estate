@@ -86,6 +86,8 @@ with column44:
     low_return, high_return = st.slider('Return in Years (relevant only for "Buy" types)', min_value=0, max_value=100, value=(0, 25))
 
 series_city = df.city.value_counts()
+# GOOD - compute once and cache
+@st.cache_data
 common_cities = series_city[series_city > 10].index.tolist()
 
 with column55:
@@ -126,27 +128,64 @@ with column99:
 #Needed to be modified because return filter only works if real estate is for sale
 #27.04.2025
 
-if "Rent" not in distribution_types:
+# if "Rent" not in distribution_types:
 
-    df_query = df.query("price >= @low_price and price <= @high_price") \
-                .query("area >= @low_area and area <= @high_area") \
-                .query("city in @locations") \
-                .query("estate_type in @types") \
-                .query("state in @states") \
-                .query("distribution_type in @distribution_types") \
-                .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
-                .query("room >= @low_room and room <= @high_room") \
-                .query("return_in_years >= @low_return and return_in_years <= @high_return")
-else:
+#     df_query = df.query("price >= @low_price and price <= @high_price") \
+#                 .query("area >= @low_area and area <= @high_area") \
+#                 .query("city in @locations") \
+#                 .query("estate_type in @types") \
+#                 .query("state in @states") \
+#                 .query("distribution_type in @distribution_types") \
+#                 .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+#                 .query("room >= @low_room and room <= @high_room") \
+#                 .query("return_in_years >= @low_return and return_in_years <= @high_return")
+# else:
 
-    df_query = df.query("price >= @low_price and price <= @high_price") \
-                .query("area >= @low_area and area <= @high_area") \
-                .query("city in @locations") \
-                .query("estate_type in @types") \
-                .query("state in @states") \
-                .query("distribution_type in @distribution_types") \
-                .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
-                .query("room >= @low_room and room <= @high_room")
+#     df_query = df.query("price >= @low_price and price <= @high_price") \
+#                 .query("area >= @low_area and area <= @high_area") \
+#                 .query("city in @locations") \
+#                 .query("estate_type in @types") \
+#                 .query("state in @states") \
+#                 .query("distribution_type in @distribution_types") \
+#                 .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
+#                 .query("room >= @low_room and room <= @high_room")
+
+@st.cache_data
+def filter_df(df, low_price, high_price, low_area, high_area,
+              low_room, high_room, low_return, high_return,
+              locations, states, distribution_types, types, date_to_select):
+
+    if date_to_select == "Today":
+        date_mask = df['creation_date'].dt.date == datetime.date.today()
+    elif date_to_select == "Last Week":
+        cutoff = datetime.date.today() - datetime.timedelta(days=7)
+        date_mask = df['creation_date'].dt.date >= cutoff
+    elif date_to_select == "Last Month":
+        cutoff = datetime.date.today() - datetime.timedelta(days=30)
+        date_mask = df['creation_date'].dt.date >= cutoff
+    else:
+        date_mask = pd.Series(True, index=df.index)
+
+    mask = (
+        date_mask &
+        df['price'].between(low_price, high_price) &
+        df['area'].between(low_area, high_area) &
+        df['room'].between(low_room, high_room) &
+        df['city'].isin(locations) &
+        df['state'].isin(states) &
+        df['estate_type'].isin(types) &
+        df['distribution_type'].isin(distribution_types)
+    )
+
+    if "Rent" not in distribution_types:
+        mask &= df['return_in_years'].between(low_return, high_return)
+
+    return df[mask].copy()
+
+df_query = filter_df(df, low_price, high_price, low_area, high_area,
+                     low_room, high_room, low_return, high_return,
+                     tuple(locations), tuple(states),  # tuples are hashable for cache
+                     tuple(distribution_types), tuple(types), date_to_select)
 
 ordered_columns = ['image', 'title', 'city', 'district', 'price', 'area', 'room','price_per_m2', \
                     'ref_price', 'sale_ratio', 'return_in_years', 'creation_date', 'url', "makler"]
