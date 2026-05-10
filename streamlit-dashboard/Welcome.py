@@ -207,7 +207,7 @@ st.dataframe(
         "url" : st.column_config.LinkColumn('🔗URL'),
         "makler" : st.column_config.TextColumn('Makler')
     },
-    hide_index=True,width="content"
+    hide_index=True,width="stretch"
 )
 
 # Filter and group data
