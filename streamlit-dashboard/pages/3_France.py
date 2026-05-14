@@ -192,7 +192,7 @@ fig.update_layout(xaxis_title='Area of estate',yaxis_title='Mean unit price',
 
 with left_column:
     st.subheader("Mean unit price per m²")
-    left_column.plotly_chart(fig, use_container_width=True)
+    left_column.plotly_chart(fig, width='stretch')
 
 df2 = df[df.municipality.isin(most_popular_cities)] \
     .groupby(["municipality"])[["price_per_m2"]] \
@@ -219,7 +219,7 @@ fig3.update_layout(barmode="group",
 
 with middle_column:
     st.subheader("Average Price per m²")
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width='stretch')
 
 
 most_popular_cities = df.municipality.value_counts()[df.municipality.value_counts() > 10].index.tolist()
@@ -244,7 +244,7 @@ fig2.update_layout(
 
 with right_column:
     st.subheader("Average price of cities")
-    right_column.plotly_chart(fig2,use_container_width=True)
+    right_column.plotly_chart(fig2, width='stretch')
 
 
 # ---- HIDE STREAMLIT STYLE ----
