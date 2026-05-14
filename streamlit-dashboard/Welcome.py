@@ -15,16 +15,14 @@ st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layo
 
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
-
-#conn2 = st.connection("gsheets_coordinates", type=GSheetsConnection)
+conn2 = st.connection("gsheets_2", type=GSheetsConnection)
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-# @st.cache_data()
-# def load_data():
-#     return conn.read()
+df1 = conn.read()
+df2 = conn2.read()
 
-df = conn.read()
+df = pd.concat([df1, df2], ignore_index=True).drop_duplicates().reset_index(drop=True)
 
 df['creation_date'] = pd.to_datetime(df['creation_date'])
 df['update_date'] = pd.to_datetime(df['update_date'])
