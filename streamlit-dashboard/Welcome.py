@@ -127,9 +127,12 @@ with column99:
         date_start = df["creation_date"].min()
         date_end   = df["creation_date"].max()
 
-# Convert to pandas Timestamps once for comparison
-date_start = pd.Timestamp(date_start, tz="UTC")
-date_end   = pd.Timestamp(date_end,   tz="UTC")
+def make_utc(d):
+    ts = pd.Timestamp(d)
+    return ts.tz_convert("UTC") if ts.tzinfo else ts.tz_localize("UTC")
+
+date_start = make_utc(date_start)
+date_end   = make_utc(date_end)
 
 # --- Single-pass boolean mask (all filters in one go) ---
 mask = (
