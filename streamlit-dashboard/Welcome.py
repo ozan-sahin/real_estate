@@ -154,13 +154,13 @@ def filter_df(df, low_price, high_price, low_area, high_area,
               locations, states, distribution_types, types, date_to_select):
 
     if date_to_select == "Today":
-        date_mask = df['creation_date'].dt.date == datetime.date.today()
+        date_mask = df['query_date'].dt.date == datetime.date.today()
     elif date_to_select == "Last Week":
         cutoff = datetime.date.today() - datetime.timedelta(days=7)
         date_mask = df['creation_date'].dt.date >= cutoff
     elif date_to_select == "Last Month":
         cutoff = datetime.date.today() - datetime.timedelta(days=30)
-        date_mask = df['creation_date'].dt.date >= cutoff
+        date_mask = df['query_date'].dt.date >= cutoff
     else:
         date_mask = pd.Series(True, index=df.index)
 
