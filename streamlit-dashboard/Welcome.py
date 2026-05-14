@@ -108,19 +108,19 @@ with column77:
 with column88:
     types = st.multiselect("Estate Type", ["apartment", "house"],["apartment", "house"])
 
-with column99:
+# with column99:
 
-    date_options = ["Today", "Last Week", "Last Month", "All Time"]
-    date_to_select = st.selectbox("Date Range", date_options)
+#     date_options = ["Today", "Last Week", "Last Month", "All Time"]
+#     date_to_select = st.selectbox("Date Range", date_options)
 
-    if date_to_select == "Today":
-        dates = [datetime.date.today().strftime('%Y-%m-%d')]
-    elif date_to_select == "Last Week":
-        dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
-    elif date_to_select == "Last Month":
-        dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
-    else:
-        dates = df.creation_date.dt.strftime('%Y-%m-%d').unique().tolist()
+#     if date_to_select == "Today":
+#         dates = [datetime.date.today().strftime('%Y-%m-%d')]
+#     elif date_to_select == "Last Week":
+#         dates = pd.date_range(end=datetime.date.today(), periods=7).strftime('%Y-%m-%d').tolist()
+#     elif date_to_select == "Last Month":
+#         dates = pd.date_range(end=datetime.date.today(), periods=30).strftime('%Y-%m-%d').tolist()
+#     else:
+#         dates = df.query_date.dt.strftime('%Y-%m-%d').unique().tolist()
       
 # queried dataframe
 # Needed to be modified because return filter only works if real estate is for sale
@@ -134,9 +134,9 @@ if "Rent" not in distribution_types:
                 .query("estate_type in @types") \
                 .query("state in @states") \
                 .query("distribution_type in @distribution_types") \
-                .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
                 .query("room >= @low_room and room <= @high_room") \
                 .query("return_in_years >= @low_return and return_in_years <= @high_return")
+                # .query("query_date.dt.strftime('%Y-%m-%d') in @dates") \
 else:
 
     df_query = df.query("price >= @low_price and price <= @high_price") \
@@ -145,8 +145,9 @@ else:
                 .query("estate_type in @types") \
                 .query("state in @states") \
                 .query("distribution_type in @distribution_types") \
-                .query("creation_date.dt.strftime('%Y-%m-%d') in @dates") \
                 .query("room >= @low_room and room <= @high_room")
+                # .query("query_date.dt.strftime('%Y-%m-%d') in @dates") \
+                
 
 # @st.cache_data
 # def filter_df(df, low_price, high_price, low_area, high_area,
