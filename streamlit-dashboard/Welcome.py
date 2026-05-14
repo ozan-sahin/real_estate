@@ -128,8 +128,8 @@ with column99:
         date_end   = df["creation_date"].max()
 
 # Convert to pandas Timestamps once for comparison
-date_start = pd.Timestamp(date_start)
-date_end   = pd.Timestamp(date_end)
+date_start = pd.Timestamp(date_start, tz="UTC")
+date_end   = pd.Timestamp(date_end,   tz="UTC")
 
 # --- Single-pass boolean mask (all filters in one go) ---
 mask = (
