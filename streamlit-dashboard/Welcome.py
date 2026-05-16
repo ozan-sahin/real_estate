@@ -110,20 +110,21 @@ with column99:
 
     date_options = ["Today", "Last Week", "Last Month", "All Time"]
     date_to_select = st.selectbox("Date Range", date_options)
-
+    today = pd.Timestamp.today(tz="UTC").normalize()
+    
     # --- Date filter: compute scalar bounds, not a list ---
     if date_to_select == "Today":
-        date_start = datetime.date.today()
-        date_end   = datetime.date.today()
+        date_start = today
+        date_end = today + pd.Timedelta(days=1) - pd.Timedelta(microseconds=1)
     elif date_to_select == "Last Week":
-        date_start = datetime.date.today() - datetime.timedelta(days=6)
-        date_end   = datetime.date.today()
+        date_start = today - pd.Timedelta(days=6)
+        date_end = today + pd.Timedelta(days=1) - pd.Timedelta(microseconds=1)
     elif date_to_select == "Last Month":
-        date_start = datetime.date.today() - datetime.timedelta(days=29)
-        date_end   = datetime.date.today()
+        date_start = today - pd.Timedelta(days=29)
+        date_end = today + pd.Timedelta(days=1) - pd.Timedelta(microseconds=1)
     else:  # All Time
         date_start = df["creation_date"].min()
-        date_end   = df["creation_date"].max()
+        date_end = df["creation_date"].max()
 
 def make_utc(d):
     ts = pd.Timestamp(d)
