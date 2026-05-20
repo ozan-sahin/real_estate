@@ -14,15 +14,16 @@ from geopy.geocoders import Photon
 st.set_page_config(page_title="Real Estate Analytics", page_icon=":house:", layout="wide")
 
 # Create a connection object.
-conn = st.connection("gsheets", type=GSheetsConnection)
+# conn = st.connection("gsheets", type=GSheetsConnection)
 conn2 = st.connection("gsheets_2", type=GSheetsConnection)
 
 st.title(":house: Welcome to Real Estate Analytics")
 
-df1 = conn.read()
+# df1 = conn.read()
 df2 = conn2.read()
 
-df = pd.concat([df1, df2], ignore_index=True).drop_duplicates().reset_index(drop=True)
+# df = pd.concat([df1, df2], ignore_index=True).drop_duplicates().reset_index(drop=True)
+df = df2.copy()
 
 df['creation_date'] = pd.to_datetime(df['creation_date'])
 df['update_date'] = pd.to_datetime(df['update_date'])
