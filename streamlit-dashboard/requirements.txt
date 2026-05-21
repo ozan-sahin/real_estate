@@ -3,8 +3,6 @@ pandas
 numpy==1.26.4
 plotly
 matplotlib
-folium
-streamlit_folium
 sqlalchemy
 st-gsheets-connection
 geopy
