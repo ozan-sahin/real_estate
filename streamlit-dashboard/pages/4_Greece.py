@@ -5,10 +5,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
 import matplotlib.pyplot as plt
-import folium
-from folium.plugins import MarkerCluster
-import folium
-from streamlit_folium import st_folium
 from geopy.geocoders import Photon
 
 st.set_page_config(page_title="Greece Real Estate Market", page_icon="🏺", layout="wide")
