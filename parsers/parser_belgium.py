@@ -1,3 +1,4 @@
+#%%
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -58,3 +59,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df['source'] = 'Immoweb'
     df['query_date'] = pd.to_datetime('today').strftime('%Y-%m-%d')
     return df
+
+def save(df:pd.DataFrame):
+    df.to_csv("delete.csv", index=False, encoding="utf-8-sig", sep=";")
+#%%

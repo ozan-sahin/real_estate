@@ -1,14 +1,15 @@
+#%%
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
+import re
 
 def parse() -> pd.DataFrame:
 
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br'}
+    'Accept-Language': 'en-US,en;q=0.9'}
 
     data = []
 
@@ -28,7 +29,7 @@ def parse() -> pd.DataFrame:
             region = listing.find('span', class_='region').get_text(strip=True)
             department = listing.find('span', class_='department').get_text(strip=True)
             location_raw = listing.find('span', class_='commune').get_text(strip=True)
-            desc = listing.find('div', class_='description').get_text(strip=True)
+            desc = listing.find('div', class_='description').get_text(strip=True).strip()
             bedrooms = listing.find('i', {'title' : 'Bedrooms'}).find_next().get_text(strip=True) if listing.find('i', {'title' : 'Bedrooms'}) else None
             bathrooms = listing.find('i', {'title' : 'Bathrooms'}).find_next().get_text(strip=True) if listing.find('i', {'title' : 'Bathrooms'}) else None
             area = listing.find('i', {'title' : 'Habitable Size'}).find_next().get_text(strip=True) if listing.find('i', {'title' : 'Habitable Size'}) else None
@@ -59,6 +60,7 @@ def clean(df:pd.DataFrame) -> pd.DataFrame:
     df['price'] = df['price_raw'].str.replace('€', '').str.replace(',', '').str.strip().astype(float)
     df['bedrooms'] = df['bedrooms_raw'].str.extract(r'(\d+)').astype(float)
     df['bathrooms'] = df['bathrooms_raw'].str.extract(r'(\d+)').astype(float)
+    df['desc'] = df['desc'].apply(lambda row: re.sub(r'\s{2,}', ' ', row))
     df['area'] = df['area_raw'].str.extract(r'(\d+)').astype(float)
     df['price_per_m2'] = round(df['price'] / df['area'],0)
     df['land_area'] = df['land_area_raw'].str.replace(",","").str.extract(r'(\d+)').astype(float)
@@ -67,3 +69,7 @@ def clean(df:pd.DataFrame) -> pd.DataFrame:
     df['query_date'] = datetime.datetime.now().strftime("%Y-%m-%d")
     df = df.drop(['price_raw', 'bedrooms_raw', 'bathrooms_raw', 'area_raw', 'land_area_raw', 'municipality_raw'], axis=1)
     return df
+
+def save(df:pd.DataFrame):
+    df.to_csv("delete.csv", index=False, encoding="utf-8-sig", sep=";")
+#%%

@@ -6,10 +6,12 @@ import time
 
 def parse() -> pd.DataFrame:
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br'}
+    headers = {
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "accept-language": "en-US;en;q=0.9",
+    "accept-encoding": "gzip, deflate, br"
+    }
 
     portgual_districts = [
         "aveiro-distrito", "beja-distrito", "braga-distrito", "braganca-distrito", "castelo-branco-distrito",
@@ -20,11 +22,11 @@ def parse() -> pd.DataFrame:
 
     data = []
 
-    for district in portgual_districts:
+    for district in portgual_districts[:2]:
 
         base_url = f"https://www.idealista.pt/en/comprar-casas/{district}/"
 
-        for page in range(1,10): # 60 pages max.
+        for page in range(1,2): # 60 pages max.
             if page == 1:
                 param = "?ordem=atualizado-desc"
             else:
@@ -86,5 +88,8 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df['source'] = 'idealista'
     df['query_date'] = pd.to_datetime('today').strftime('%Y-%m-%d')
     return df
+
+def save(df:pd.DataFrame):
+    df.to_csv("delete.csv", index=False, encoding="utf-8-sig", sep=";")
 
 #%%

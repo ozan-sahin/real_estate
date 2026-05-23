@@ -6,10 +6,24 @@ import pandas as pd
 
 def parse() -> pd.DataFrame:
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br'}
+    headers = {
+        "authority": "www.xe.gr",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7,tr;q=0.6,hu;q=0.5",
+        "cache-control": "no-cache",
+        "pragma": "no-cache",
+        "priority": "u=0, i",
+        "sec-ch-ua": '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"',
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": '"Android"',
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Mobile Safari/537.36",
+    }
 
     data = []
 
@@ -24,7 +38,6 @@ def parse() -> pd.DataFrame:
 
     for page in range(1,20): #Hardcoded max number of pages
 
-        # Define the URL of the Spitogatos search page
         url = 'https://www.xe.gr/en/property/results'
         params['page'] = page
         response = requests.get(url, headers=headers, params=params)
@@ -41,13 +54,14 @@ def parse() -> pd.DataFrame:
             title = listing.find("div", {"class": "common-property-ad-title"}).get_text(strip=True)
             price = listing.find("div", {"class": "common-property-ad-price"}).find("span").get_text(strip=True) \
                 .replace("\xa0", "").replace("€", "").replace(".", "").strip()
-            level = listing.find("div", {"class": "property-ad-level-container"}).get_text(strip=True)
+            level = listing.find("div", {"class": "property-ad-level-container"}).get_text(strip=True) \
+                if listing.find("div", {"class": "property-ad-level-container"}) else None
             bedrooms = listing.find("div", {"class": "property-ad-bedrooms-container"}).get_text(strip=True).replace("×", "").strip() \
                 if listing.find("div", {"class": "property-ad-bedrooms-container"}) else None
             bathrooms = listing.find("div", {"class": "property-ad-bathrooms-container"}).get_text(strip=True).replace("×", "").strip() \
                 if listing.find("div", {"class": "property-ad-bathrooms-container"}) else None
-            year = listing.find("div", {"class": "property-ad-construction-year-container"}).get_text(strip=True).replace("×", "").strip() \
-                if listing.find("div", {"class": "property-ad-construction-year-container"}) else None
+            year = listing.find("span", {"data-testid": "property-ad-xe xe-house-construction"}).get_text(strip=True).replace("×", "").strip() \
+                if listing.find("span", {"data-testid": "property-ad-xe xe-house-construction"}) else None
             location = listing.find("div", {"class": "common-property-ad-area-container"}).get_text(strip=True).split("|")[0].strip() 
             type_ = listing.find("div", {"class": "common-property-ad-area-container"}).get_text(strip=True).split("|")[1].strip()
             url = listing.find('a')['href']
@@ -71,7 +85,8 @@ def parse() -> pd.DataFrame:
     return df
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
-    df['price'] = pd.to_numeric(df['price'], errors='coerce')
+    df['price'] = pd.to_numeric(df['price'].str.replace(",", ""), errors='coerce')
+    df['location'] = df['location'].str.split("(").str[0].str.strip()    
     df['area'] = df['title'].str.extract(r'(\d+)').astype(int)
     df['price_per_m2'] = round(df['price'] / df['area'],0)
     df['bedrooms'] = pd.to_numeric(df['bedrooms'], errors='coerce').fillna(0).astype(int)
@@ -79,4 +94,6 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df['year'] = df['year'].fillna(0).astype(int)
     return df
 
+def save(df:pd.DataFrame):
+    df.to_csv("delete.csv", index=False, encoding="utf-8-sig", sep=";")
 #%%

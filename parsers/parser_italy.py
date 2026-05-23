@@ -5,91 +5,105 @@ import pandas as pd
 
 def parse() -> pd.DataFrame:
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br'}
+    headers = {
+        "authority": "www.immobiliare.it",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7,tr;q=0.6,hu;q=0.5",
+        "cache-control": "no-cache",
+        "pragma": "no-cache",
+        "priority": "u=0, i",
+        "referer": "https://www.immobiliare.it/en/",
+        "sec-ch-device-memory": "8",
+        "sec-ch-ua": '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"',
+        "sec-ch-ua-arch": '""',
+        "sec-ch-ua-full-version-list": '"Chromium";v="146.0.7680.178", "Not-A.Brand";v="24.0.0.0", "Google Chrome";v="146.0.7680.178"',
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-model": '"Nexus 5"',
+        "sec-ch-ua-platform": '"Android"',
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Mobile Safari/537.36",
+    }
 
-    italy_provinces = ['agrigento-provincia', 'alessandria-provincia', 'alpi-marittime-costa-azzurra', 'ancona-provincia',
-                    'aosta-provincia', 'arezzo-provincia', 'ascoli-piceno-provincia', 'asti-provincia',
-                    'avellino-provincia', 'bari-provincia', 'barletta-andria-trani', 'belluno-provincia',
-                    'benevento-provincia', 'bergamo-provincia', 'biella-provincia', 'bologna-provincia',
-                    'bolzano-bozen-provincia', 'brescia-provincia', 'brindisi-provincia', 'cagliari-provincia',
-                    'caltanissetta-provincia', 'campobasso-provincia', 'canton-ticino', 'caserta-provincia', 'catania-provincia',
-                    'catanzaro-provincia', 'chieti-provincia', 'como-provincia', 'cosenza-provincia', 'cremona-provincia',
-                    'crotone-provincia', 'cuneo-provincia', 'enna-provincia', 'fermo-provincia', 'ferrara-provincia',
-                    'firenze-provincia', 'foggia-provincia', 'forli-cesena', 'frosinone-provincia', 'genova-provincia',
-                    'gorizia-provincia', 'grosseto-provincia', 'imperia-provincia', 'isernia-provincia', 'l-aquila-provincia',
-                    'la-spezia-provincia', 'latina-provincia', 'lecce-provincia', 'lecco-provincia', 'livorno-provincia',
-                    'lodi-provincia', 'lucca-provincia', 'macerata-provincia', 'mantova-provincia', 'massa-carrara',
-                    'matera-provincia', 'messina-provincia', 'milano-provincia', 'modena-provincia', 'monza-brianza',
-                    'napoli-provincia', 'novara-provincia', 'nuoro-provincia', 'oristano-provincia', 'padova-provincia',
-                    'palermo-provincia', 'parma-provincia', 'pavia-provincia', 'perugia-provincia', 'pesaro-urbino',
-                    'pescara-provincia', 'piacenza-provincia', 'pisa-provincia', 'pistoia-provincia', 'pordenone-provincia',
-                    'potenza-provincia', 'prato-provincia', 'ragusa-provincia', 'ravenna-provincia', 'reggio-calabria-provincia',
-                    'reggio-emilia-provincia', 'rieti-provincia', 'rimini-provincia', 'roma-provincia', 'rovigo-provincia',
-                    'salerno-provincia', 'san-marino-provincia', 'sassari-provincia', 'savona-provincia', 'siena-provincia',
-                    'sondrio-provincia', 'sud-sardegna', 'siracusa-provincia', 'taranto-provincia', 'teramo-provincia',
-                    'terni-provincia', 'trapani-provincia', 'trento-provincia', 'treviso-provincia', 'trieste-provincia',
-                    'torino-provincia', 'udine-provincia', 'varese-provincia', 'venezia-provincia', 'verbano-cusio-ossola',
-                    'vercelli-provincia', 'verona-provincia', 'vibo-valentia-provincia', 'vicenza-provincia', 'viterbo-provincia']
+    italy_provinces = ['sardegna','sicilia','calabria','puglia','basilicata',
+        'campania','molise','lazio','abruzzo','marche','umbria','toscana',
+        'emilia-romagna','veneto','friuli-venezia-giulia','litorale-sloveno',
+        'istria-e-quarnaro','liguria','provenza-alpi-costa-azzurra']
 
+    params = {"criterio" : "data",
+              "ordine" : "desc",
+              "pag" : "1"}
     data = []
 
     for province in italy_provinces:
 
-        base_url = f"https://www.idealista.it/en/vendita-case/{province}/"
+        base_url = f"https://www.immobiliare.it/en/vendita-case/{province}/"
 
         for page in range(1,5): # 60 pages max.
-            if page == 1:
-                param = "?ordine=pubblicazione-desc"
-            else:
-                param = f"lista-{str(page)}.htm?ordine=pubblicazione-desc"
-            print(str(page) + " " + province)
-            response = requests.get(base_url + param, headers=headers)
+            params["pag"] = str(page)
+            response = requests.get(base_url, params=params, headers=headers)
             if response.status_code != 200:
                 print('Error', response.status_code)
                 break
-            soup = BeautifulSoup(response.content, 'html.parser')
-            listings = soup.find_all('article', class_='item')
+            soup = BeautifulSoup(response.content, 'lxml')
+            listings = soup.findAll('li', class_='nd-list__item in-searchLayoutListItem')
             if len(listings) == 0:
                 print(f'No more listings found in {province}')
                 break
 
             for listing in listings:
-                title = listing.find('a', class_='item-link').get_text(strip=True)
-                url = listing.find('a', class_='item-link')['href']
-                image = listing.find('img')['src'] if listing.find('img') else None
-                estate_type = title.split(' in ')[0]
-                address = title.split(' in ')[-1]
-                price = int(listing.find('span', class_='item-price').get_text(strip=True).replace('€','').replace(',','').strip())
-                details = listing.find_all('span', class_='item-detail')
-                area = int(details[1].get_text(strip=True).replace('m²', '').replace(',','').strip()) if len(details) > 1 and 'm²' in details[1].get_text(strip=True) else None
-                price_per_m2 = round(price / area) if area else None
-                room = int(details[0].get_text(strip=True).replace('rooms', '').strip()) if 'rooms' in details[0].get_text(strip=True) else None
-                other_details = details[2].get_text(strip=True) if len(details) > 2 else None
-                
+
+                price = listing.find('div', class_='in-listingCardPrice').find("span"). \
+                    get_text(strip=True).replace("from", "").replace('€','').replace(',','').strip()
+                title = listing.find('a').get_text(strip=True)
+                url = listing.find('a')['href']
+                details = "|".join([item.text for item in listing.findAll("div", class_="in-listingCardFeatureList__item")])
+                desc = listing.find("div", class_="in-listingCardDescription").get_text(strip=True) \
+                    if listing.find("div", class_="in-listingCardDescription") else None
+                image = listing.find("img")["src"]
+
                 data.append({
-                    'url': "https://www.idealista.it" + url,
-                    'title': title,
-                    'address': address,
-                    'province': province,
-                    'estate_tpye' : estate_type,
-                    'price': price,
-                    'price_per_m2': price_per_m2,
-                    'details': details,
-                    'area': area,
-                    'room': room,
-                    'other': other_details,
-                    'image': image
-                })
+                        'url': url,
+                        'title': title,
+                        'province': province,
+                        'price_raw': price,
+                        'details': details,
+                        'description' : desc,
+                        'image': image
+                    })
 
     df = pd.DataFrame(data)
     return df
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
-    df['source'] = 'idealista'
+    df = df[~df["price_raw"].str.lower().str.contains("price", na=False)].reset_index(drop=True)
+    df["price"] = df["price_raw"].astype(float)
+    df["area"] = df.details.str.replace(",", "").str.extract(r'(\d+\.?\d*) m²').astype(float)
+    df = df[~df["area"].isnull()].reset_index(drop=True)
+    df["price_per_m2"] = round(df["price"] / df["area"], 0)
+    df["county"] = df.title.str.split(",").str[-1].str.strip()
+    #ref_price_per_m2 = df.groupby("county")["price_per_m2"].mean().round().to_dict()
+    #df["ref_price_per_m2"] = df["county"].map(ref_price_per_m2)
+    #df['sale_ratio'] = df.apply(lambda row: get_sale_ratio(row, ref_price_per_m2), axis=1)
+    #county_counts = df["county"].value_counts()
+    #df.loc[df["county"].isin(county_counts[county_counts < 5].index), "sale_ratio"] = None
+    df["rooms"] = df.details.str.extract(r'(\d+\.?\d*) rooms').astype(float)
+    df['source'] = 'immobiliare'
     df['query_date'] = pd.to_datetime('today').strftime('%Y-%m-%d')
+    df.drop(columns=['price_raw', 'details'], inplace=True)
     return df
 
-#%%
+def get_sale_ratio(row:pd.DataFrame, mapping) -> pd.DataFrame:
+
+    ref = mapping[row["county"]]
+    if ref == 0 or ref is None:
+        return None
+    return round((row["price_per_m2"] - ref) / ref * -100, 2)
+
+def save(df:pd.DataFrame):
+    df.to_csv("delete.csv", index=False, encoding="utf-8-sig", sep=";")
+    #%%
