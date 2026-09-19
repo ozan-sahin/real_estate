@@ -111,7 +111,7 @@ df_query = filter_df(
     df,
     low_price, high_price,
     low_area, high_area,
-    tuple(states), tuple(counties), tuple(cities),  # tuples for cache hashing
+    tuple(states), tuple(cities),  # tuples for cache hashing
     date_to_select
 )
 
