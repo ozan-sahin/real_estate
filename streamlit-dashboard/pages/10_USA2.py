@@ -172,7 +172,7 @@ with column1:
         st.metric(label="City", value=df.iloc[index].city)
         
     with column1_3:
-        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
+        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{df.iloc[index].sale_ratio * (-100)} %", delta_color="inverse")
         st.metric(label="Reference rent price", value=f"{(df.iloc[index].rentZestimate / df.iloc[index].area_m2):,.2f} €/m²")
         st.metric(label="Bedrooms", value=df.iloc[index].bedrooms)
         st.metric(label="State", value=df.iloc[index].state)
