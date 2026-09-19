@@ -6,12 +6,12 @@ import plotly.graph_objects as go
 from streamlit_gsheets import GSheetsConnection
 from geopy.geocoders import Photon
 
-st.set_page_config(page_title="USA Real Estate Market", page_icon="🌭", layout="wide")
+st.set_page_config(page_title="USA Real Estate Market (Zillow)", page_icon="🌭", layout="wide")
 
 # Create a connection object.
-conn = st.connection("gsheets_usa", type=GSheetsConnection)
+conn = st.connection("gsheets_usa2", type=GSheetsConnection)
 
-st.title("🌭 USA Real Estate Market")
+st.title("🌭 USA Real Estate Market (Zillow)")
 
 df = conn.read()
 df['query_date'] = pd.to_datetime(df['query_date'])
