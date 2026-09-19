@@ -165,7 +165,7 @@ with column1:
         st.image(df.iloc[index].img, caption=df.iloc[index].address)
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
     with column1_2:
-        st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} $", delta=f"{round((df.iloc[index].price - df.iloc[index].zestimate) / (df.iloc[index].zestimate) * 100)} %", delta_color="inverse")
+        st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} $", delta=f"{round((df.iloc[index].price - df.iloc[index].zestimate) / (df.iloc[index].zestimate) * 100,1)} %", delta_color="inverse")
         st.metric(label="Area", value=f"{df.iloc[index].area_m2:,.0f} m²")
         st.metric(label="Bathrooms", value=df.iloc[index].bathrooms)
         st.metric(label="City", value=df.iloc[index].city)
