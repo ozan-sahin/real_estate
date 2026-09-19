@@ -125,7 +125,7 @@ st.dataframe(
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f $/m²"),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f $"),
         "sale_ratio" : st.column_config.ProgressColumn('💰Discount',format="%f",min_value=-50,max_value=100),
-        "zestimate" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
+        "zestimate" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f $/m²"),
         "return" : st.column_config.NumberColumn('💰ReturnInYears'),
         "area_m2" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "bedrooms" : st.column_config.TextColumn('🏨Bedrooms'),
@@ -171,15 +171,15 @@ with column1:
         st.metric(label="City", value=df.iloc[index].city)
         
     with column1_3:
-        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{round(df.iloc[index].sale_ratio *100,1)} %", delta_color="inverse")
-        st.metric(label="Reference rent price", value=f"{(df.iloc[index].rentZestimate / df.iloc[index].area_m2):,.2f} €/m²")
+        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} $/m²", delta=f"{round(df.iloc[index].sale_ratio *100,1)} %", delta_color="inverse")
+        st.metric(label="Reference rent price", value=f"{(df.iloc[index].rentZestimate / df.iloc[index].area_m2):,.2f} $/m²")
         st.metric(label="Bedrooms", value=df.iloc[index].bedrooms)
         st.metric(label="State", value=df.iloc[index].state)
 
     with column1_4: 
         try:
-            st.metric(label="Expected annual rent", value=f"{(df.iloc[index].rentZestimate * 12):,.0f} €/year")
-            st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].rentZestimate):,.0f} €/month")
+            st.metric(label="Expected annual rent", value=f"{(df.iloc[index].rentZestimate * 12):,.0f} $/year")
+            st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].rentZestimate):,.0f} $/month")
             st.metric(label="Return", value=f"{(df.iloc[index]["return"]):.2f} years")
             #st.metric(label="Days since last update", value=(datetime.date.today() - df.iloc[index].update_date.date()).days)
         except ValueError:
