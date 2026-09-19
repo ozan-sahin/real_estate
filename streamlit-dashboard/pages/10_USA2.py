@@ -46,22 +46,21 @@ with column6:
 
 st.markdown("""---""")
 
-ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
+ordered_columns = ['img', 'state', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'query_date', 'url']
 
-column1, column3, column4, column5, column6 = st.columns([4, 2, 2, 2, 1])
+column1, column3, column5, column6 = st.columns([4, 2, 2, 1])
 
 @st.cache_data
 def get_filter_options(df):
     return {
         'states': df.state.sort_values().unique().tolist(),
-        'counties': df.county.sort_values().unique().tolist(),
         'cities': df.city.sort_values().unique().tolist(),
     }
 
 @st.cache_data
 def filter_df(df, low_price, high_price, low_area, high_area,
-                  states, counties, cities, date_to_select):
+                  states, cities, date_to_select):
 
     if date_to_select == "Today":
         date_mask = df['query_date'].dt.date == datetime.date.today()
@@ -79,7 +78,6 @@ def filter_df(df, low_price, high_price, low_area, high_area,
         df['price'].between(low_price, high_price) &
         df['area_m2'].between(low_area, high_area) &
         df['state'].isin(states) &
-        df['county'].isin(counties) &
         df['city'].isin(cities)
     )
 
@@ -97,12 +95,6 @@ with column3:
     all_options = st.checkbox("Select all states", value=True)
     if all_options:
         states = options['states']
-
-with column4:
-    counties = st.multiselect("County", options['counties'], [])
-    all_options_counties = st.checkbox("Select all counties", value=True)
-    if all_options_counties:
-        counties = options['counties']
 
 with column5:
     cities = st.multiselect("Cities", options['cities'], [])
@@ -123,7 +115,7 @@ df_query = filter_df(
     date_to_select
 )
 
-ordered_columns = ['img', 'state', 'county', 'city', 'price', 'area_m2', \
+ordered_columns = ['img', 'state', 'city', 'price', 'area_m2', \
                    'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
 
 st.dataframe(
@@ -137,7 +129,6 @@ st.dataframe(
         "bedrooms" : st.column_config.TextColumn('🏨Bedrooms'),
         "bathrooms" : st.column_config.TextColumn('🛁Bathrooms'),
         "state" : st.column_config.TextColumn('🗺️State'),
-        "county" : st.column_config.TextColumn('🧭County'),
         "city" : st.column_config.TextColumn('🏙️City'),
         "query_date" : st.column_config.DateColumn('📅Creation_Date',format="DD.MM.YYYY"),
         "url" : st.column_config.LinkColumn('🔗URL')
@@ -166,7 +157,7 @@ with column1:
     with column1_1:
         link = st.text_input(label="URL to inspect")
         if link == "":
-            index = 1
+            index = 5
         else:
             index = df.query("url == @link").index.values[0]
         st.image(df.iloc[index].img, caption=df.iloc[index].address)
@@ -180,12 +171,12 @@ with column1:
     with column1_3:
         st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} $/m²", delta_color="inverse")
         st.metric(label="Bedrooms", value=df.iloc[index].bedrooms)
-        st.metric(label="County", value=df.iloc[index].county)
         st.metric(label="State", value=df.iloc[index].state)
     
 with column2:
     try:
-        lat, lon = get_lat_lon(df.iloc[index].address)
+        lat = df.iloc[index].latitude
+        lon = df.iloc[index].longitude
         if lat and lon:
             st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=11, width="stretch")
     except:
