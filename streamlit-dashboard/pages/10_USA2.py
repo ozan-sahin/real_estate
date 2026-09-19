@@ -124,7 +124,7 @@ st.dataframe(
         "img": st.column_config.ImageColumn('📷Image', width="small"),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f $/m²"),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f $"),
-        "sale_ratio" : st.column_config.ProgressColumn('💰Discount',format="%.1f%%",min_value=-50,max_value=100),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount',format="%,.0f",min_value=-50,max_value=100),
         "zestimate" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f $"),
         "return" : st.column_config.NumberColumn('💰ReturnInYears'),
         "area_m2" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
