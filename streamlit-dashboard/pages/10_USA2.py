@@ -115,7 +115,7 @@ df_query = filter_df(
     date_to_select
 )
 
-ordered_columns = ['img', 'state', 'city', 'price', 'area_m2', \
+ordered_columns = ['img', 'state', 'city', 'price', 'area_m2', 'sale_ratio', 'zestimate', 'return',\
                    'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
 
 st.dataframe(
@@ -125,6 +125,9 @@ st.dataframe(
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f $/m²"),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f $"),
         "address" : st.column_config.TextColumn('🏠Address'),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-50,max_value=100),
+        "zestimate" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
+        "return" : st.column_config.NumberColumn('💰ReturnInYears'),
         "area_m2" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
         "bedrooms" : st.column_config.TextColumn('🏨Bedrooms'),
         "bathrooms" : st.column_config.TextColumn('🛁Bathrooms'),
@@ -170,14 +173,14 @@ with column1:
         
     with column1_3:
         st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
-        st.metric(label="Reference rent price", value=f"{(df.iloc[index].rentZestimate / df.iloc[index].area_m2):,.0f} €/m²")
+        st.metric(label="Reference rent price", value=f"{(df.iloc[index].rentZestimate / df.iloc[index].area_m2):,.2f} €/m²")
         st.metric(label="Bedrooms", value=df.iloc[index].bedrooms)
         st.metric(label="State", value=df.iloc[index].state)
 
     with column1_4: 
         try:
             st.metric(label="Expected annual rent", value=f"{(df.iloc[index].rentZestimate * 12):,.0f} €/year")
-            st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].area_m2 * df.iloc[index].rentZestimate):,.0f} €/month")
+            st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].rentZestimate):,.0f} €/month")
             st.metric(label="Yield ", value=f"{(1 / df.iloc[index]["return"] * 100):.2f} %" if df.iloc[index]["return"] != 0 else "-")
             #st.metric(label="Days since last update", value=(datetime.date.today() - df.iloc[index].update_date.date()).days)
         except ValueError:
