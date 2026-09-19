@@ -36,7 +36,7 @@ with column4:
 with column5:
     tile = column5.container( border=True)
     tile.write("Mean unit price")
-    tile.subheader(f"📈 {eound(df.price_per_m2.replace([np.inf, -np.inf], np.nan).mean().round()):,.0f} $/m²")
+    tile.subheader(f"📈 {round(df.price_per_m2.replace([np.inf, -np.inf], np.nan).mean().round()):,.0f} $/m²")
 with column6:
     today = datetime.date.today()
     added_today = df[df['query_date'].dt.date == today].shape[0]
