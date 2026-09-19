@@ -157,7 +157,7 @@ with column1:
     with column1_1:
         link = st.text_input(label="URL to inspect")
         if link == "":
-            index = 5
+            index = df.sample(1).index[0]
         else:
             index = df.query("url == @link").index.values[0]
         st.image(df.iloc[index].img, caption=df.iloc[index].address)
