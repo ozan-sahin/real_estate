@@ -181,7 +181,7 @@ with column1:
         try:
             st.metric(label="Expected annual rent", value=f"{(df.iloc[index].rentZestimate * 12):,.0f} €/year")
             st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].rentZestimate):,.0f} €/month")
-            st.metric(label="Yield ", value=f"{(1 / df.iloc[index]["return"] * 100):.2f} %" if df.iloc[index]["return"] != 0 else "-")
+            st.metric(label="Return", value=f"{(df.iloc[index]["return"]):.2f} years")
             #st.metric(label="Days since last update", value=(datetime.date.today() - df.iloc[index].update_date.date()).days)
         except ValueError:
             st.metric(label="", value="")
