@@ -124,7 +124,7 @@ st.dataframe(
         "img": st.column_config.ImageColumn('📷Image', width="small"),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f $/m²"),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f $"),
-        "sale_ratio" : st.column_config.ProgressColumn('💰Discount',format="%,.0f",min_value=-50,max_value=100),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount',format="%.1f%%",min_value=-50,max_value=100),
         "zestimate" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f $"),
         "return" : st.column_config.NumberColumn('💰ReturnInYears'),
         "area_m2" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
@@ -165,7 +165,7 @@ with column1:
         st.image(df.iloc[index].img, caption=df.iloc[index].address)
         st.markdown(f"[Link to Real Estate]({df.iloc[index].url})")
     with column1_2:
-        st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} $", delta=f"{round((df.iloc[index].sale_ratio * 100,1)} %", delta_color="inverse")
+        st.metric(label="Price", value=f"{df.iloc[index].price:,.0f} $", delta=f"{round(df.iloc[index].sale_ratio * 100,1)} %", delta_color="inverse")
         st.metric(label="Area", value=f"{df.iloc[index].area_m2:,.0f} m²")
         st.metric(label="Bathrooms", value=df.iloc[index].bathrooms)
         st.metric(label="City", value=df.iloc[index].city)
