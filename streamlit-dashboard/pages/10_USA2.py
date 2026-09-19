@@ -116,7 +116,7 @@ df_query = filter_df(
 )
 
 ordered_columns = ['img', 'state', 'city', 'price', 'area_m2', 'sale_ratio', 'zestimate', 'return',\
-                   'price_per_m2', 'bedrooms', 'bathrooms', 'address', 'query_date', 'url']
+                   'price_per_m2', 'bedrooms', 'bathrooms', 'query_date', 'url']
 
 st.dataframe(
     df_query[ordered_columns].sort_values(by="price_per_m2"),
@@ -124,8 +124,7 @@ st.dataframe(
         "img": st.column_config.ImageColumn('📷Image', width="small"),
         "price_per_m2" : st.column_config.NumberColumn('💎PricePerArea',format="%0f $/m²"),
         "price" : st.column_config.NumberColumn('💶Price $',format="%,.0f $"),
-        "address" : st.column_config.TextColumn('🏠Address'),
-        "sale_ratio" : st.column_config.ProgressColumn('💰Discount (%)',format="%f",min_value=-50,max_value=100),
+        "sale_ratio" : st.column_config.ProgressColumn('💰Discount',format="%f",min_value=-50,max_value=100),
         "zestimate" : st.column_config.NumberColumn('🏷️ReferencePrice',format="%0f €/m²"),
         "return" : st.column_config.NumberColumn('💰ReturnInYears'),
         "area_m2" : st.column_config.NumberColumn('📐Area',format="%0f m²"),
