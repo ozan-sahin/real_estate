@@ -153,7 +153,7 @@ def get_lat_lon( address: str) -> tuple:
     return [None,None]
 
 with column1:
-    column1_1, column1_2, column1_3 = st.columns([4,2,2])
+    column1_1, column1_2, column1_3, column1_4 = st.columns([4,2,2,2])
     with column1_1:
         link = st.text_input(label="URL to inspect")
         if link == "":
@@ -169,9 +169,19 @@ with column1:
         st.metric(label="City", value=df.iloc[index].city)
         
     with column1_3:
-        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} $/m²", delta_color="inverse")
+        st.metric(label="Price per m²", value=f"{df.iloc[index].price_per_m2:,.0f} €/m²", delta=f"{df.iloc[index].sale_ratio * -1} %", delta_color="inverse")
+        st.metric(label="Reference rent price", value=f"{(df.iloc[index].rentZestimate / df.iloc[index].area_m2):,.0f} €/m²")
         st.metric(label="Bedrooms", value=df.iloc[index].bedrooms)
         st.metric(label="State", value=df.iloc[index].state)
+
+    with column1_4: 
+        try:
+            st.metric(label="Expected annual rent", value=f"{(df.iloc[index].rentZestimate * 12):,.0f} €/year")
+            st.metric(label="Expected monthly rent", value=f"{(df.iloc[index].area_m2 * df.iloc[index].rentZestimate):,.0f} €/month")
+            st.metric(label="Yield ", value=f"{round((1 / df.iloc[index].return) * 100, 2)} %")
+            #st.metric(label="Days since last update", value=(datetime.date.today() - df.iloc[index].update_date.date()).days)
+        except ValueError:
+            st.metric(label="", value="")
     
 with column2:
     try:
@@ -181,84 +191,6 @@ with column2:
             st.map(pd.DataFrame([{"lat": lat,"lon": lon}]), zoom=11, width="stretch")
     except:
             st.map(pd.DataFrame([{"lat": 51.233,"lon": 6.783}]), zoom=7, width="stretch")
-
-
-
-# left_column, middle_column, right_column = st.columns([3,5, 5], gap="large")
-
-# bins = [30,60,90,120,150,180,210]
-# df['category'] = pd.cut(df['area_m2'], bins)
-# df_area_return = df.groupby("category")["price_per_m2"].agg(["mean"])
-# df_area_return.index = bins[:-1]
-
-# fig = px.bar(
-#     df_area_return,
-#     y='mean',
-#     x=df_area_return.index.tolist(),
-# )
-
-# fig.update_layout(xaxis_title='Area of estate',yaxis_title='Mean unit price',
-#                   legend=dict(orientation = "h",
-#                     yanchor="bottom", y=-0.3,
-#                     xanchor="left", x=0.01))
-
-# with left_column:
-#     st.subheader("Mean unit price in $ per m²")
-#     left_column.plotly_chart(fig, use_container_width=True)
-
-# df2 = df[df.city.isin(most_popular_cities)] \
-#     .groupby(["city"])[["price_per_m2"]] \
-#     .mean().sort_values(by="price_per_m2").round(1)
-
-# fig3 = go.Figure()
-# fig3.add_trace(go.Bar(
-#     x=df2.index,
-#     y=df2["price_per_m2"],
-#     name="Price $ per m²",
-#     yaxis="y1"
-# ))
-
-# fig3.update_layout(barmode="group",
-#                     yaxis2=dict(
-#                         anchor='free',
-#                         overlaying='y',
-#                         side='right',
-#                         position=1
-#                     ),
-#                    legend=dict(orientation = "h",
-#                     yanchor="bottom", y=-0.7,
-#                     xanchor="left", x=0.01))
-
-# with middle_column:
-#     st.subheader("Average Price $ per m²")
-#     st.plotly_chart(fig3, use_container_width=True)
-
-
-# most_popular_cities = df.city.value_counts()[df.city.value_counts() > 10].index.tolist()
-
-# df_price = df[df.city.isin(most_popular_cities)].groupby(["city"])["price"] \
-#           .agg(["mean"]) \
-#           .sort_values(by="mean") \
-#           .round(2)
-
-# fig2 = go.Figure()
-
-# fig2.add_trace(go.Bar(
-#     x=df_price.index,
-#     y=df_price["mean"],
-#     name="mean price in $"
-
-# ))
-
-# fig2.update_layout(
-#                    legend=dict(orientation = "h",
-#                     yanchor="bottom", y=-0.7,
-#                     xanchor="left", x=0.01))
-
-# with right_column:
-#     st.subheader("Average price of cities")
-#     right_column.plotly_chart(fig2, use_container_width=True)
-
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
